@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:rich_text_composer/richtext_append_controller.dart';
 import 'package:rich_text_composer/views/keyboard_richtext.dart';
 import 'package:rich_text_composer/views/widgets/rich_text_keyboard_toolbar.dart';
 
@@ -49,11 +48,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final RichTextAppendController richTextAppendController = RichTextAppendController();
 
   @override
   void initState() {
-    richTextAppendController.showRichTextView();
     super.initState();
   }
 
@@ -65,7 +62,6 @@ class _MyHomePageState extends State<MyHomePage> {
         title: const Text('Flutter Demo Home Page'),
       ),
       body: KeyboardRichText(
-        richTextAppendController: richTextAppendController,
         backgroundKeyboardToolBarColor: Colors.grey,
         keyBroadToolbar: RichTextKeyboardToolBar(
             insertImage: () {}, insertAttachment: () {}, appendRickText: () {}),
