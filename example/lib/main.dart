@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:rich_text_composer/richtext_append_controller.dart';
 import 'package:rich_text_composer/views/keyboard_richtext.dart';
 import 'package:rich_text_composer/views/widgets/rich_text_keyboard_toolbar.dart';
+import 'package:rich_text_composer/views/widgets/option_bottom_sheet.dart';
+import 'package:rich_text_composer/views/widgets/rich_text_option_bottom_sheet.dart';
 
 void main() {
   runApp(const MyApp());
@@ -51,7 +53,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final RichTextAppendController richTextAppendController =
       RichTextAppendController();
-
   @override
   void initState() {
     richTextAppendController.showRichTextView();
@@ -67,19 +68,23 @@ class _MyHomePageState extends State<MyHomePage> {
       body: KeyboardRichText(
         richTextAppendController: richTextAppendController,
         backgroundKeyboardToolBarColor: Colors.grey,
-        keyBroadToolbar: RichTextKeyboardToolBar(insertImage: () {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text("insertImage"),
-          ));
-        }, insertAttachment: () {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text("insertAttachment"),
-          ));
-        }, appendRickText: () {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text("appendRickText"),
-          ));
-        }),
+        keyBroadToolbar: RichTextKeyboardToolBar(
+            insertImage: () {},
+            insertAttachment: () {},
+            appendRickText: () {
+              showModalBottomSheet(
+                  shape: const RoundedRectangleBorder(
+                    // <-- SEE HERE
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(25.0),
+                    ),
+                  ),
+                  backgroundColor: Colors.white,
+                  context: context,
+                  builder: (context) => RichTextOptionBottomSheet(
+                        title: 'Footer',
+                      ));
+            }),
         child: const Center(
           child: TextField(),
         ),
