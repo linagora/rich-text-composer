@@ -49,7 +49,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final RichTextAppendController richTextAppendController = RichTextAppendController();
+  final RichTextAppendController richTextAppendController =
+      RichTextAppendController();
 
   @override
   void initState() {
@@ -59,7 +60,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Flutter Demo Home Page'),
@@ -67,8 +67,19 @@ class _MyHomePageState extends State<MyHomePage> {
       body: KeyboardRichText(
         richTextAppendController: richTextAppendController,
         backgroundKeyboardToolBarColor: Colors.grey,
-        keyBroadToolbar: RichTextKeyboardToolBar(
-            insertImage: () {}, insertAttachment: () {}, appendRickText: () {}),
+        keyBroadToolbar: RichTextKeyboardToolBar(insertImage: () {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("insertImage"),
+          ));
+        }, insertAttachment: () {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("insertAttachment"),
+          ));
+        }, appendRickText: () {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("appendRickText"),
+          ));
+        }),
         child: const Center(
           child: TextField(),
         ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:rich_text_composer/views/commons/image_paths.dart';
 
-typedef IconWebCallback = void Function();
+typedef OnTabCallback = void Function();
 const String packageName = 'rich_text_composer';
 
 class RichTextKeyboardToolBar extends StatelessWidget {
@@ -61,7 +61,7 @@ class RichTextKeyboardToolBar extends StatelessWidget {
 
   Widget _buildIcon({
     required Widget icon,
-    IconWebCallback? onTap,
+    OnTabCallback? onTap,
     EdgeInsets? iconPadding,
     double? iconSize,
     double? splashRadius,
