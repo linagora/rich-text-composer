@@ -1,5 +1,7 @@
 library keyboard_richtext;
 
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:rich_text_composer/richtext_append_controller.dart';
