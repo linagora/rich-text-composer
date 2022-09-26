@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:rich_text_composer/richtext_append_controller.dart';
+import 'package:rich_text_composer/richtext_controller.dart';
 import 'package:rich_text_composer/views/keyboard_richtext.dart';
 import 'package:rich_text_composer/views/widgets/rich_text_keyboard_toolbar.dart';
-import 'package:rich_text_composer/views/widgets/option_bottom_sheet.dart';
-import 'package:rich_text_composer/views/widgets/rich_text_option_bottom_sheet.dart';
 
 void main() {
   runApp(const MyApp());
@@ -51,11 +49,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final RichTextAppendController richTextAppendController =
-      RichTextAppendController();
+  final RichTextController richTextController = RichTextController();
+
   @override
   void initState() {
-    richTextAppendController.showRichTextView();
+    richTextController.showRichTextView();
     super.initState();
   }
 
@@ -66,25 +64,12 @@ class _MyHomePageState extends State<MyHomePage> {
         title: const Text('Flutter Demo Home Page'),
       ),
       body: KeyboardRichText(
-        richTextAppendController: richTextAppendController,
+        richTextController: richTextController,
         backgroundKeyboardToolBarColor: Colors.grey,
         keyBroadToolbar: RichTextKeyboardToolBar(
-            insertImage: () {},
-            insertAttachment: () {},
-            appendRickText: () {
-              showModalBottomSheet(
-                  shape: const RoundedRectangleBorder(
-                    // <-- SEE HERE
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(25.0),
-                    ),
-                  ),
-                  backgroundColor: Colors.white,
-                  context: context,
-                  builder: (context) => RichTextOptionBottomSheet(
-                        title: 'Footer',
-                      ));
-            }),
+          insertImage: () {},
+          insertAttachment: () {},
+        ),
         child: const Center(
           child: TextField(),
         ),

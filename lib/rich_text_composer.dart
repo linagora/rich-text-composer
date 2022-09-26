@@ -4,4 +4,4 @@ library rich_text_composer;
 export 'views/keyboard_richtext.dart';
 
 /// Controller
-export 'richtext_append_controller.dart';
+export 'richtext_controller.dart';

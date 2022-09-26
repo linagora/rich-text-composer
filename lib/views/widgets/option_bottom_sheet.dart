@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:rich_text_composer/views/commons/image_paths.dart';
 import 'package:rich_text_composer/views/widgets/rich_text_keyboard_toolbar.dart';
@@ -16,47 +17,53 @@ class OptionBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              const SizedBox(
-                width: 24,
-                height: 24,
-              ),
-              Expanded(
-                child: Text(
-                  title,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-              InkWell(
-                onTap: () => Navigator.of(context).pop(),
-                child: SvgPicture.asset(
-                  _imagePaths.icDismiss,
-                  fit: BoxFit.fill,
+    return ColoredBox(
+      color: Colors.white,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                const SizedBox(
                   width: 24,
                   height: 24,
-                  package: packageName,
                 ),
-              ),
-            ],
+                Expanded(
+                  child: Text(
+                    title,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    SystemChannels.textInput.invokeMethod('TextInput.show');
+                    Navigator.of(context).pop();
+                  },
+                  child: SvgPicture.asset(
+                    _imagePaths.icDismiss,
+                    fit: BoxFit.fill,
+                    width: 24,
+                    height: 24,
+                    package: packageName,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        Container(color: const Color(0xFFE4E4E4), height: 1),
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: child,
-        ),
-      ],
+          Container(color: const Color(0xFFE4E4E4), height: 1),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: child,
+          ),
+        ],
+      ),
     );
   }
 }
