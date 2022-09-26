@@ -4,12 +4,18 @@ import 'package:rich_text_composer/views/commons/colors.dart';
 import 'package:rich_text_composer/views/commons/image_paths.dart';
 import 'package:rich_text_composer/views/widgets/option_bottom_sheet.dart';
 import 'package:rich_text_composer/views/widgets/rich_text_keyboard_toolbar.dart';
+import 'package:enough_html_editor/enough_html_editor.dart' as html_editor;
 
 class RichTextOptionBottomSheet extends StatelessWidget {
+  RichTextOptionBottomSheet({
+    super.key,
+    required this.title,
+    this.htmlEditorApi,
+  });
+
   final String title;
   final ImagePaths _imagePaths = ImagePaths();
-
-  RichTextOptionBottomSheet({super.key, required this.title});
+  final html_editor.HtmlEditorApi? htmlEditorApi;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +28,21 @@ class RichTextOptionBottomSheet extends StatelessWidget {
           const SizedBox(height: 8),
           _buildQuickStyle(),
           const SizedBox(height: 8),
-
+          Row(
+            children: [
+              Expanded(child: _buildAlignStyle()),
+              const SizedBox(width: 8),
+              Expanded(child: _buildColorStyle()),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(child: _buildFormatStyle()),
+              const SizedBox(width: 8),
+              Expanded(child: _buildOrderListStyle()),
+            ],
+          )
         ],
       ),
     );
@@ -49,13 +69,21 @@ class RichTextOptionBottomSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _buildIconButton(true, () {}, _imagePaths.icBoldStyle),
+          _buildIconButton(true, () {
+            htmlEditorApi?.formatBold();
+          }, _imagePaths.icBoldStyle),
           _buildVerticalDivider(),
-          _buildIconButton(true, () {}, _imagePaths.icItalicStyle),
+          _buildIconButton(true, () {
+            htmlEditorApi?.formatItalic();
+          }, _imagePaths.icItalicStyle),
           _buildVerticalDivider(),
-          _buildIconButton(false, () {}, _imagePaths.icStrikeThrough),
+          _buildIconButton(false, () {
+            htmlEditorApi?.formatStrikeThrough();
+          }, _imagePaths.icStrikeThrough),
           _buildVerticalDivider(),
-          _buildIconButton(false, () {}, _imagePaths.icUnderLine),
+          _buildIconButton(false, () {
+            htmlEditorApi?.formatUnderline();
+          }, _imagePaths.icUnderLine),
         ],
       ),
     );
@@ -67,7 +95,8 @@ class RichTextOptionBottomSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text('Quick styles',
+          const Text(
+            'Quick styles',
             overflow: TextOverflow.ellipsis,
             maxLines: 1,
             textAlign: TextAlign.center,
@@ -97,30 +126,57 @@ class RichTextOptionBottomSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text('Quick styles',
-            overflow: TextOverflow.ellipsis,
-            maxLines: 1,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: CommonColor.colorIconSelect,
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          LimitedBox(
-            maxWidth: 28,
-            maxHeight: 28,
-            child: SvgPicture.asset(
-              _imagePaths.icArrowRight,
-              package: packageName,
-              fit: BoxFit.contain,
-            ),
-          ),
+          _buildIconButton(false, () {}, _imagePaths.icAlignLeft),
+          _buildVerticalDivider(),
+          _buildIconButton(false, () {}, _imagePaths.icAlignCenter),
+          _buildVerticalDivider(),
+          _buildIconButton(false, () {}, _imagePaths.icAlignRight),
         ],
       ),
     );
   }
 
+  Widget _buildColorStyle() {
+    return _buildBorderContainer(
+      Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _buildIconButton(false, () {}, _imagePaths.icTextColor),
+          _buildVerticalDivider(),
+          _buildIconButton(false, () {}, _imagePaths.icBackgroundColor),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFormatStyle() {
+    return _buildBorderContainer(
+      Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _buildIconButton(false, () {}, _imagePaths.icIndentFormat),
+          _buildVerticalDivider(),
+          _buildIconButton(false, () {}, _imagePaths.icOutDentFormat),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOrderListStyle() {
+    return _buildBorderContainer(
+      Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _buildIconButton(false, () {}, _imagePaths.icBulletOrder),
+          _buildVerticalDivider(),
+          _buildIconButton(false, () {}, _imagePaths.icNumberOrder),
+        ],
+      ),
+    );
+  }
 
   Widget _buildVerticalDivider() => Container(
         width: 1,
