@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:get/route_manager.dart';
+import 'package:rich_text_composer/richtext_controller.dart';
 import 'package:rich_text_composer/views/commons/image_paths.dart';
-import 'package:rich_text_composer/views/widgets/rich_text_option_bottom_sheet.dart';
-import 'package:enough_html_editor/enough_html_editor.dart' as html_editor;
 
 typedef OnTabCallback = void Function();
 
@@ -14,14 +12,15 @@ class RichTextKeyboardToolBar extends StatelessWidget {
   final VoidCallback insertImage;
   final VoidCallback insertAttachment;
   final ImagePaths _imagePaths = ImagePaths();
-  final html_editor.HtmlEditorApi? htmlEditorApi;
+
+  final RichTextController richTextController;
 
   RichTextKeyboardToolBar({
     super.key,
     required this.insertImage,
     required this.insertAttachment,
     this.isLandScapeMode,
-    this.htmlEditorApi,
+    required this.richTextController,
   });
 
   @override
@@ -58,15 +57,8 @@ class RichTextKeyboardToolBar extends StatelessWidget {
             package: packageName,
             fit: BoxFit.fill,
           ),
-          onTap: () async {
-            htmlEditorApi?.unfocus();
-            await Get.bottomSheet(
-              RichTextOptionBottomSheet(
-                title: 'Format',
-              ),
-              useRootNavigator: true,
-            );
-            htmlEditorApi?.moveCursorAtLastNode();
+          onTap: () {
+            richTextController.showRichTextBottomSheet(context);
           },
         ),
       ],

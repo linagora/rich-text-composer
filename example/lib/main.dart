@@ -1,3 +1,4 @@
+import 'package:enough_html_editor/enough_html_editor.dart';
 import 'package:flutter/material.dart';
 import 'package:rich_text_composer/richtext_controller.dart';
 import 'package:rich_text_composer/views/keyboard_richtext.dart';
@@ -60,18 +61,42 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Flutter Demo Home Page'),
-      ),
+      appBar: AppBar(title: const Text('Flutter Demo Home Page'), actions: [
+        InkWell(
+            child: Text('Unfucs'),
+            onTap: () {
+              richTextController.showRichTextBottomSheet(context);
+            })
+      ]),
       body: KeyboardRichText(
         richTextController: richTextController,
         backgroundKeyboardToolBarColor: Colors.grey,
         keyBroadToolbar: RichTextKeyboardToolBar(
+          richTextController: richTextController,
           insertImage: () {},
           insertAttachment: () {},
         ),
-        child: const Center(
-          child: TextField(),
+        child: SingleChildScrollView(
+          child: HtmlEditor(
+            key: const Key('composer_editor'),
+            minHeight: 550,
+            addDefaultSelectionMenuItems: false,
+            onCreated: (editorApi) {
+              richTextController.htmlEditorApi = editorApi;
+
+              editorApi.onFocus = () {
+                richTextController.appendSpecialRichText();
+                richTextController.applyHeaderStyle();
+                richTextController.showRichTextView();
+              };
+
+              editorApi.onFocusOut = () {
+                richTextController.hideRichTextView();
+              };
+
+              richTextController.listenHtmlEditorApi();
+            },
+          ),
         ),
       ),
     );

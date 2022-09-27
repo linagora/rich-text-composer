@@ -90,7 +90,7 @@ packages:
     description:
       path: "."
       ref: improvements_for_use_tmail
-      resolved-ref: "5d18805adfa597f774ec9ba398dcf9a74a432b9d"
+      resolved-ref: "44b44ed713ed60cfcfec15878ba1f8c7c01742df"
       url: "https://github.com/ManhNTX/enough_html_editor.git"
     source: git
     version: "0.0.5"
