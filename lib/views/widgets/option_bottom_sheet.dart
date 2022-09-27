@@ -17,8 +17,13 @@ class OptionBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
-      color: Colors.white,
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.all(
+          Radius.circular(16),
+        ),
+      ),
       child: Column(
         children: [
           Padding(
@@ -43,7 +48,6 @@ class OptionBottomSheet extends StatelessWidget {
                 ),
                 InkWell(
                   onTap: () {
-                    SystemChannels.textInput.invokeMethod('TextInput.show');
                     Navigator.of(context).pop();
                   },
                   child: SvgPicture.asset(
@@ -58,9 +62,11 @@ class OptionBottomSheet extends StatelessWidget {
             ),
           ),
           Container(color: const Color(0xFFE4E4E4), height: 1),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: child,
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: child,
+            ),
           ),
         ],
       ),

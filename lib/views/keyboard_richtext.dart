@@ -23,25 +23,30 @@ class KeyboardRichText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return KeyboardVisibilityBuilder(builder: (context, isKeyboardVisible) {
-      return Scaffold(
-        body: child,
-        bottomSheet: StreamBuilder(
-          stream: richTextController.richTextStream,
-          builder: (context, snapshot) {
-            return Visibility(
-              visible: snapshot.hasData &&
-                  snapshot.data == true &&
-                  isKeyboardVisible,
-              child: Container(
-                height: heightToolBar,
-                color: backgroundKeyboardToolBarColor,
-                alignment: Alignment.centerLeft,
-                child: keyBroadToolbar,
-              ),
-            );
-          },
+      return Stack(children: <Widget>[
+        child,
+        Positioned(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+          left: 0,
+          right: 0,
+          child: StreamBuilder(
+            stream: richTextController.richTextStream,
+            builder: (context, snapshot) {
+              return Visibility(
+                visible: snapshot.hasData &&
+                    snapshot.data == true &&
+                    isKeyboardVisible,
+                child: Container(
+                  height: heightToolBar,
+                  color: backgroundKeyboardToolBarColor,
+                  alignment: Alignment.centerLeft,
+                  child: keyBroadToolbar,
+                ),
+              );
+            },
+          ),
         ),
-      );
+      ]);
     });
   }
 }

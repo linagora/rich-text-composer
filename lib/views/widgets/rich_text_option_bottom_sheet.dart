@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:rich_text_composer/richtext_controller.dart';
 import 'package:rich_text_composer/views/commons/colors.dart';
 import 'package:rich_text_composer/views/commons/image_paths.dart';
+import 'package:rich_text_composer/views/widgets/list_header_style.dart';
 import 'package:rich_text_composer/views/widgets/option_bottom_sheet.dart';
 import 'package:rich_text_composer/views/widgets/rich_text_keyboard_toolbar.dart';
 import 'package:enough_html_editor/enough_html_editor.dart' as html_editor;
@@ -11,11 +14,13 @@ class RichTextOptionBottomSheet extends StatelessWidget {
     super.key,
     required this.title,
     this.htmlEditorApi,
+    required this.richTextController,
   });
 
   final String title;
   final ImagePaths _imagePaths = ImagePaths();
   final html_editor.HtmlEditorApi? htmlEditorApi;
+  final RichTextController richTextController;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +31,7 @@ class RichTextOptionBottomSheet extends StatelessWidget {
         children: [
           _buildSpecialStyle(),
           const SizedBox(height: 8),
-          _buildQuickStyle(),
+          _buildQuickStyle(context),
           const SizedBox(height: 8),
           Row(
             children: [
@@ -65,57 +70,96 @@ class RichTextOptionBottomSheet extends StatelessWidget {
 
   Widget _buildSpecialStyle() {
     return _buildBorderContainer(
-      Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _buildIconButton(true, () {
-            htmlEditorApi?.formatBold();
-          }, _imagePaths.icBoldStyle),
-          _buildVerticalDivider(),
-          _buildIconButton(true, () {
-            htmlEditorApi?.formatItalic();
-          }, _imagePaths.icItalicStyle),
-          _buildVerticalDivider(),
-          _buildIconButton(false, () {
-            htmlEditorApi?.formatStrikeThrough();
-          }, _imagePaths.icStrikeThrough),
-          _buildVerticalDivider(),
-          _buildIconButton(false, () {
-            htmlEditorApi?.formatUnderline();
-          }, _imagePaths.icUnderLine),
-        ],
+      Obx(
+        () => Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _buildIconButton(
+              richTextController.isTextStyleTypeSelected(SpecialStyleType.bold),
+              () {
+                richTextController.selectTextStyleType(SpecialStyleType.bold);
+              },
+              _imagePaths.icBoldStyle,
+            ),
+            _buildVerticalDivider(),
+            _buildIconButton(
+              richTextController
+                  .isTextStyleTypeSelected(SpecialStyleType.italic),
+              () {
+                richTextController.selectTextStyleType(SpecialStyleType.italic);
+              },
+              _imagePaths.icItalicStyle,
+            ),
+            _buildVerticalDivider(),
+            _buildIconButton(
+              richTextController
+                  .isTextStyleTypeSelected(SpecialStyleType.strikeThrough),
+              () {
+                richTextController
+                    .selectTextStyleType(SpecialStyleType.strikeThrough);
+              },
+              _imagePaths.icStrikeThrough,
+            ),
+            _buildVerticalDivider(),
+            _buildIconButton(
+              richTextController
+                  .isTextStyleTypeSelected(SpecialStyleType.underline),
+              () {
+                richTextController
+                    .selectTextStyleType(SpecialStyleType.underline);
+              },
+              _imagePaths.icUnderLine,
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildQuickStyle() {
+  Widget _buildQuickStyle(BuildContext context) {
     return _buildBorderContainer(
-      Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-            'Quick styles',
-            overflow: TextOverflow.ellipsis,
-            maxLines: 1,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: CommonColor.colorIconSelect,
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
+      InkWell(
+        onTap: () {
+          showModalBottomSheet(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              backgroundColor: Colors.white,
+              context: context,
+              builder: (_) => ListHeaderStyle(
+                    itemSelected: (item) {
+                      Navigator.of(context).pop();
+                      richTextController.headerStyleTypeApply.value = item;
+                    },
+                  ));
+        },
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              'Quick styles',
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: CommonColor.colorIconSelect,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-          ),
-          LimitedBox(
-            maxWidth: 28,
-            maxHeight: 28,
-            child: SvgPicture.asset(
-              _imagePaths.icArrowRight,
-              package: packageName,
-              fit: BoxFit.contain,
+            LimitedBox(
+              maxWidth: 28,
+              maxHeight: 28,
+              child: SvgPicture.asset(
+                _imagePaths.icArrowRight,
+                package: packageName,
+                fit: BoxFit.contain,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -190,6 +234,7 @@ class RichTextOptionBottomSheet extends StatelessWidget {
   ) {
     return Expanded(
       child: InkWell(
+        onTap: onTap,
         child: Container(
           color: isSelected ? CommonColor.colorBackgroundSelect : Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
