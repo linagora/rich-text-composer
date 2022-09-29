@@ -63,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(title: const Text('Flutter Demo Home Page'), actions: [
         InkWell(
-            child: Text('Unfucs'),
+            child: const Text('Unfucs'),
             onTap: () {
               richTextController.showRichTextBottomSheet(context);
             })
@@ -81,21 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
             key: const Key('composer_editor'),
             minHeight: 550,
             addDefaultSelectionMenuItems: false,
-            onCreated: (editorApi) {
-              richTextController.htmlEditorApi = editorApi;
-
-              editorApi.onFocus = () {
-                richTextController.appendSpecialRichText();
-                richTextController.applyHeaderStyle();
-                richTextController.showRichTextView();
-              };
-
-              editorApi.onFocusOut = () {
-                richTextController.hideRichTextView();
-              };
-
-              richTextController.listenHtmlEditorApi();
-            },
+            onCreated: richTextController.onCreateHTMLEditor,
           ),
         ),
       ),
