@@ -4,6 +4,7 @@ import 'package:enough_html_editor/enough_html_editor.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rich_text_composer/views/widgets/rich_text_option_bottom_sheet.dart';
+
 enum HeaderStyleType {
   normal,
   blockquote,
@@ -62,7 +63,7 @@ enum HeaderStyleType {
   }
 
   double get textSize {
-    switch(this) {
+    switch (this) {
       case HeaderStyleType.normal:
         return 16;
       case HeaderStyleType.blockquote:
@@ -85,7 +86,7 @@ enum HeaderStyleType {
   }
 
   FontWeight get fontWeight {
-    switch(this) {
+    switch (this) {
       case HeaderStyleType.normal:
       case HeaderStyleType.blockquote:
       case HeaderStyleType.code:
@@ -108,17 +109,48 @@ enum SpecialStyleType {
   strikeThrough;
 }
 
-class RichTextController {
+enum ParagraphType {
+  alignLeft,
+  alignRight,
+  alignCenter,
+  justify;
+}
 
+enum DentType {
+  indent,
+  outdent;
+}
+
+enum OrderListType {
+  bulletedList,
+  numberedList;
+
+  String get commandAction {
+    switch (this) {
+      case OrderListType.bulletedList:
+        return 'insertUnorderedList';
+      case OrderListType.numberedList:
+        return 'insertOrderedList';
+    }
+  }
+}
+
+class RichTextController {
   HtmlEditorApi? htmlEditorApi;
 
   final listSpecialTextStyleApply = RxSet<SpecialStyleType>();
+  final paragraphTypeApply = Rx<ParagraphType>(ParagraphType.alignLeft);
+  final dentTypeApply = Rxn<DentType>();
+  final orderListTypeApply = Rxn<OrderListType>();
+
   final headerStyleTypeApply = Rx<HeaderStyleType>(HeaderStyleType.normal);
 
-  final StreamController<bool> richTextStreamController = StreamController<bool>();
+  final StreamController<bool> richTextStreamController =
+      StreamController<bool>();
 
   final isSpecialStyleSelected = [false, false, false, false];
 
+  final isOrderListSelected = [false, false];
 
   Stream<bool> get richTextStream => richTextStreamController.stream;
 
@@ -159,50 +191,58 @@ class RichTextController {
     return listSpecialTextStyleApply.contains(richTextStyleType);
   }
 
-  void appendSpecialRichText() {
-    if (isTextStyleTypeSelected(SpecialStyleType.bold) && !isSpecialStyleSelected[0]) {
+  Future<void> appendSpecialRichText() async {
+    if (isTextStyleTypeSelected(SpecialStyleType.bold) &&
+        !isSpecialStyleSelected[0]) {
       isSpecialStyleSelected[0] = true;
-      htmlEditorApi?.formatBold();
+      await htmlEditorApi?.formatBold();
     }
 
-    if (!isTextStyleTypeSelected(SpecialStyleType.bold) && isSpecialStyleSelected[0]) {
+    if (!isTextStyleTypeSelected(SpecialStyleType.bold) &&
+        isSpecialStyleSelected[0]) {
       isSpecialStyleSelected[0] = false;
-      htmlEditorApi?.formatBold();
+      await htmlEditorApi?.formatBold();
     }
 
-    if (isTextStyleTypeSelected(SpecialStyleType.italic) && !isSpecialStyleSelected[1]) {
+    if (isTextStyleTypeSelected(SpecialStyleType.italic) &&
+        !isSpecialStyleSelected[1]) {
       isSpecialStyleSelected[1] = true;
-      htmlEditorApi?.formatItalic();
+      await htmlEditorApi?.formatItalic();
     }
 
-    if (!isTextStyleTypeSelected(SpecialStyleType.italic) && isSpecialStyleSelected[1]) {
+    if (!isTextStyleTypeSelected(SpecialStyleType.italic) &&
+        isSpecialStyleSelected[1]) {
       isSpecialStyleSelected[1] = false;
-      htmlEditorApi?.formatItalic();
+      await htmlEditorApi?.formatItalic();
     }
 
-    if (isTextStyleTypeSelected(SpecialStyleType.underline) && !isSpecialStyleSelected[2]) {
+    if (isTextStyleTypeSelected(SpecialStyleType.underline) &&
+        !isSpecialStyleSelected[2]) {
       isSpecialStyleSelected[2] = true;
-      htmlEditorApi?.formatUnderline();
+      await htmlEditorApi?.formatUnderline();
     }
 
-    if (!isTextStyleTypeSelected(SpecialStyleType.underline) && isSpecialStyleSelected[2]) {
+    if (!isTextStyleTypeSelected(SpecialStyleType.underline) &&
+        isSpecialStyleSelected[2]) {
       isSpecialStyleSelected[2] = false;
-      htmlEditorApi?.formatUnderline();
+      await htmlEditorApi?.formatUnderline();
     }
 
-    if (isTextStyleTypeSelected(SpecialStyleType.strikeThrough) && !isSpecialStyleSelected[3]) {
+    if (isTextStyleTypeSelected(SpecialStyleType.strikeThrough) &&
+        !isSpecialStyleSelected[3]) {
       isSpecialStyleSelected[3] = true;
-      htmlEditorApi?.formatStrikeThrough();
+      await htmlEditorApi?.formatStrikeThrough();
     }
 
-    if (!isTextStyleTypeSelected(SpecialStyleType.strikeThrough) && isSpecialStyleSelected[3]) {
+    if (!isTextStyleTypeSelected(SpecialStyleType.strikeThrough) &&
+        isSpecialStyleSelected[3]) {
       isSpecialStyleSelected[3] = false;
-      htmlEditorApi?.formatStrikeThrough();
+      await htmlEditorApi?.formatStrikeThrough();
     }
   }
 
   void showRichTextBottomSheet(BuildContext context) async {
-    await htmlEditorApi?.removeVirtualKeyboard();
+    await htmlEditorApi?.unfocus();
     await showModalBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(
@@ -214,11 +254,81 @@ class RichTextController {
         title: 'Format',
       ),
     );
-    await htmlEditorApi?.ableVirtualKeyboard();
   }
 
   Future<void> applyHeaderStyle() async {
     await htmlEditorApi?.formatHeader(headerStyleTypeApply.value.styleValue);
+  }
+
+  Future<void> applyParagraphType() async {
+    switch (paragraphTypeApply.value) {
+      case ParagraphType.alignLeft:
+        await htmlEditorApi?.formatAlignLeft();
+        return;
+      case ParagraphType.alignRight:
+        await htmlEditorApi?.formatAlignRight();
+        return;
+      case ParagraphType.alignCenter:
+        await htmlEditorApi?.formatAlignCenter();
+        return;
+      case ParagraphType.justify:
+        await htmlEditorApi?.formatAlignJustify();
+        return;
+    }
+  }
+
+  Future<void> applyDentType() async {
+    switch (dentTypeApply.value) {
+      case DentType.indent:
+        await htmlEditorApi?.formatIndent();
+        dentTypeApply.value = null;
+        return;
+      case DentType.outdent:
+        await htmlEditorApi?.formatOutent();
+        dentTypeApply.value = null;
+        return;
+      default:
+        return;
+    }
+  }
+
+  selectOrderListType(OrderListType orderListType) {
+    if (orderListTypeApply.value == orderListType) {
+      orderListTypeApply.value = null;
+    } else {
+      orderListTypeApply.value = orderListType;
+    }
+  }
+
+  Future<void> applyOrderListType() async {
+    switch (orderListTypeApply.value) {
+      case OrderListType.bulletedList:
+        if (!isOrderListSelected[0]) {
+          await htmlEditorApi?.insertUnorderedList();
+          isOrderListSelected[0] = true;
+          isOrderListSelected[1] = false;
+        }
+        return;
+      case OrderListType.numberedList:
+        if (!isOrderListSelected[1]) {
+          await htmlEditorApi?.insertOrderedList();
+          isOrderListSelected[0] = false;
+          isOrderListSelected[1] = true;
+        }
+        return;
+      default:
+        if (isOrderListSelected[0]) {
+          await htmlEditorApi?.insertUnorderedList();
+        }
+
+        if (isOrderListSelected[1]) {
+          await htmlEditorApi?.insertOrderedList();
+        }
+
+        isOrderListSelected[0] = false;
+        isOrderListSelected[1] = false;
+        return;
+    }
   }
 
   void showRichTextView() {
@@ -229,6 +339,25 @@ class RichTextController {
     richTextStreamController.sink.add(false);
   }
 
+  Future<void> editorOnFocus() async {
+    await applyParagraphType();
+    await applyOrderListType();
+    await applyDentType();
+    await applyHeaderStyle();
+    await appendSpecialRichText();
+    showRichTextView();
+  }
+
+  void onCreateHTMLEditor(HtmlEditorApi editorApi) {
+    htmlEditorApi = editorApi;
+    editorApi.onFocus = editorOnFocus;
+    editorApi.onFocusOut = () {
+      hideRichTextView();
+    };
+    listenHtmlEditorApi();
+  }
+
   void dispose() {
     richTextStreamController.close();
-  }}
+  }
+}

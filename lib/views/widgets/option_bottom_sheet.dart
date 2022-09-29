@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:rich_text_composer/views/commons/colors.dart';
 import 'package:rich_text_composer/views/commons/image_paths.dart';
 import 'package:rich_text_composer/views/widgets/rich_text_keyboard_toolbar.dart';
 
@@ -61,7 +61,7 @@ class OptionBottomSheet extends StatelessWidget {
               ],
             ),
           ),
-          Container(color: const Color(0xFFE4E4E4), height: 1),
+          Container(color: CommonColor.colorBorderGray, height: 1),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(16),

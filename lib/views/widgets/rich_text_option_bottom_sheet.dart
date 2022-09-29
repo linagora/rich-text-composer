@@ -166,16 +166,33 @@ class RichTextOptionBottomSheet extends StatelessWidget {
 
   Widget _buildAlignStyle() {
     return _buildBorderContainer(
-      Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _buildIconButton(false, () {}, _imagePaths.icAlignLeft),
-          _buildVerticalDivider(),
-          _buildIconButton(false, () {}, _imagePaths.icAlignCenter),
-          _buildVerticalDivider(),
-          _buildIconButton(false, () {}, _imagePaths.icAlignRight),
-        ],
+      Obx(
+        () => Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _buildIconButton(
+                richTextController.paragraphTypeApply.value ==
+                    ParagraphType.alignLeft, () {
+              richTextController.paragraphTypeApply.value =
+                  ParagraphType.alignLeft;
+            }, _imagePaths.icAlignLeft),
+            _buildVerticalDivider(),
+            _buildIconButton(
+                richTextController.paragraphTypeApply.value ==
+                    ParagraphType.alignCenter, () {
+              richTextController.paragraphTypeApply.value =
+                  ParagraphType.alignCenter;
+            }, _imagePaths.icAlignCenter),
+            _buildVerticalDivider(),
+            _buildIconButton(
+                richTextController.paragraphTypeApply.value ==
+                    ParagraphType.alignRight, () {
+              richTextController.paragraphTypeApply.value =
+                  ParagraphType.alignRight;
+            }, _imagePaths.icAlignRight),
+          ],
+        ),
       ),
     );
   }
@@ -196,36 +213,56 @@ class RichTextOptionBottomSheet extends StatelessWidget {
 
   Widget _buildFormatStyle() {
     return _buildBorderContainer(
-      Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _buildIconButton(false, () {}, _imagePaths.icIndentFormat),
-          _buildVerticalDivider(),
-          _buildIconButton(false, () {}, _imagePaths.icOutDentFormat),
-        ],
+      Obx(
+        () => Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _buildIconButton(
+                richTextController.dentTypeApply.value == DentType.indent, () {
+              richTextController.dentTypeApply.value = DentType.indent;
+            }, _imagePaths.icIndentFormat),
+            _buildVerticalDivider(),
+            _buildIconButton(
+                richTextController.dentTypeApply.value == DentType.outdent, () {
+              richTextController.dentTypeApply.value = DentType.outdent;
+            }, _imagePaths.icOutDentFormat),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildOrderListStyle() {
     return _buildBorderContainer(
-      Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _buildIconButton(false, () {}, _imagePaths.icBulletOrder),
-          _buildVerticalDivider(),
-          _buildIconButton(false, () {}, _imagePaths.icNumberOrder),
-        ],
+      Obx(
+        () => Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _buildIconButton(
+                richTextController.orderListTypeApply.value ==
+                    OrderListType.bulletedList, () {
+              richTextController
+                  .selectOrderListType(OrderListType.bulletedList);
+            }, _imagePaths.icBulletOrder),
+            _buildVerticalDivider(),
+            _buildIconButton(
+                richTextController.orderListTypeApply.value ==
+                    OrderListType.numberedList, () {
+              richTextController
+                  .selectOrderListType(OrderListType.numberedList);
+            }, _imagePaths.icNumberOrder),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildVerticalDivider() => Container(
-        width: 1,
-        color: CommonColor.colorBorderGray,
-      );
+    width: 1,
+    color: CommonColor.colorBorderGray,
+  );
 
   Widget _buildIconButton(
     bool isSelected,
