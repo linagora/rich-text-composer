@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
 import 'package:rich_text_composer/richtext_controller.dart';
 import 'package:rich_text_composer/views/commons/colors.dart';
 import 'package:rich_text_composer/views/commons/image_paths.dart';
@@ -79,8 +78,9 @@ class RichTextOptionBottomSheet extends StatelessWidget {
 
   Widget _buildSpecialStyle() {
     return _buildBorderContainer(
-      Obx(
-        () {
+      ValueListenableBuilder(
+        valueListenable: richTextController.listSpecialTextStyleApply,
+        builder: (context, value, _) {
           return Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -182,124 +182,132 @@ class RichTextOptionBottomSheet extends StatelessWidget {
   }
 
   Widget _buildAlignStyle() {
+    return _buildBorderContainer(ValueListenableBuilder(
+      valueListenable: richTextController.paragraphTypeApply,
+      builder: (context, value, _) {
+        return Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _buildIconButton(
+                richTextController.paragraphTypeApply.value ==
+                    ParagraphType.alignLeft, () {
+              richTextController.paragraphTypeApply.value =
+                  ParagraphType.alignLeft;
+            }, _imagePaths.icAlignLeft),
+            _buildVerticalDivider(),
+            _buildIconButton(
+                richTextController.paragraphTypeApply.value ==
+                    ParagraphType.alignCenter, () {
+              richTextController.paragraphTypeApply.value =
+                  ParagraphType.alignCenter;
+            }, _imagePaths.icAlignCenter),
+            _buildVerticalDivider(),
+            _buildIconButton(
+                richTextController.paragraphTypeApply.value ==
+                    ParagraphType.alignRight, () {
+              richTextController.paragraphTypeApply.value =
+                  ParagraphType.alignRight;
+            }, _imagePaths.icAlignRight),
+          ],
+        );
+      },
+    ));
+  }
+
+  Widget _buildColorStyle(BuildContext context) {
     return _buildBorderContainer(
-      Obx(
-        () {
+      Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ValueListenableBuilder(
+              valueListenable: richTextController.selectedTextColor,
+              builder: (context, value, _) {
+                return _buildIconButton(
+                  true,
+                  () {
+                    showModalBottomSheet(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        backgroundColor: Colors.white,
+                        context: context,
+                        builder: (_) {
+                          return ColorPickerKeyboard(
+                            title: titleForegroundBottomSheet,
+                            onSelected: (color) {
+                              richTextController.selectTextColor(color);
+                              Navigator.of(context).pop();
+                            },
+                          );
+                        });
+                  },
+                  _imagePaths.icTextColor,
+                  iconColor: richTextController.selectedTextColor.value,
+                );
+              }),
+          _buildVerticalDivider(),
+          ValueListenableBuilder(
+              valueListenable: richTextController.selectedTextBackgroundColor,
+              builder: (context, value, _) {
+                return _buildIconButton(
+                  true,
+                  () {
+                    showModalBottomSheet(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        backgroundColor: Colors.white,
+                        context: context,
+                        builder: (_) {
+                          return ColorPickerKeyboard(
+                            title: titleBackgroundBottomSheet,
+                            onSelected: (color) {
+                              richTextController.selectBackgroundColor(color);
+                              Navigator.of(context).pop();
+                            },
+                          );
+                        });
+                  },
+                  _imagePaths.icBackgroundColor,
+                  iconColor:
+                      richTextController.selectedTextBackgroundColor.value,
+                );
+              })
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFormatStyle() {
+    return _buildBorderContainer(ValueListenableBuilder(
+        valueListenable: richTextController.dentTypeApply,
+        builder: (context, value, _) {
           return Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _buildIconButton(
-                  richTextController.paragraphTypeApply.value ==
-                      ParagraphType.alignLeft, () {
-                richTextController.paragraphTypeApply.value =
-                    ParagraphType.alignLeft;
-              }, _imagePaths.icAlignLeft),
+                  richTextController.dentTypeApply.value == DentType.indent,
+                  () {
+                richTextController.dentTypeApply.value = DentType.indent;
+              }, _imagePaths.icIndentFormat),
               _buildVerticalDivider(),
               _buildIconButton(
-                  richTextController.paragraphTypeApply.value ==
-                      ParagraphType.alignCenter, () {
-                richTextController.paragraphTypeApply.value =
-                    ParagraphType.alignCenter;
-              }, _imagePaths.icAlignCenter),
-              _buildVerticalDivider(),
-              _buildIconButton(
-                  richTextController.paragraphTypeApply.value ==
-                      ParagraphType.alignRight, () {
-                richTextController.paragraphTypeApply.value =
-                    ParagraphType.alignRight;
-              }, _imagePaths.icAlignRight),
+                  richTextController.dentTypeApply.value == DentType.outdent,
+                  () {
+                richTextController.dentTypeApply.value = DentType.outdent;
+              }, _imagePaths.icOutDentFormat),
             ],
           );
-        },
-      ),
-    );
-  }
-
-  Widget _buildColorStyle(BuildContext context) {
-    return _buildBorderContainer(
-      Obx(() {
-        return Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildIconButton(
-              true,
-              () {
-                showModalBottomSheet(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    backgroundColor: Colors.white,
-                    context: context,
-                    builder: (_) {
-                      return ColorPickerKeyboard(
-                        title: titleForegroundBottomSheet,
-                        onSelected: (color) {
-                          richTextController.selectTextColor(color);
-                          Navigator.of(context).pop();
-                        },
-                      );
-                    });
-              },
-              _imagePaths.icTextColor,
-              iconColor: richTextController.selectedTextColor.value,
-            ),
-            _buildVerticalDivider(),
-            _buildIconButton(
-              true,
-              () {
-                showModalBottomSheet(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    backgroundColor: Colors.white,
-                    context: context,
-                    builder: (_) {
-                      return ColorPickerKeyboard(
-                        title: titleBackgroundBottomSheet,
-                        onSelected: (color) {
-                          richTextController.selectBackgroundColor(color);
-                          Navigator.of(context).pop();
-                        },
-                      );
-                    });
-              },
-              _imagePaths.icBackgroundColor,
-              iconColor: richTextController.selectedTextBackgroundColor.value,
-            ),
-          ],
-        );
-      }),
-    );
-  }
-
-  Widget _buildFormatStyle() {
-    return _buildBorderContainer(
-      Obx(() {
-        return Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildIconButton(
-                richTextController.dentTypeApply.value == DentType.indent, () {
-              richTextController.dentTypeApply.value = DentType.indent;
-            }, _imagePaths.icIndentFormat),
-            _buildVerticalDivider(),
-            _buildIconButton(
-                richTextController.dentTypeApply.value == DentType.outdent, () {
-              richTextController.dentTypeApply.value = DentType.outdent;
-            }, _imagePaths.icOutDentFormat),
-          ],
-        );
-      }),
-    );
+        }));
   }
 
   Widget _buildOrderListStyle() {
-    return _buildBorderContainer(
-      Obx(
-        () {
+    return _buildBorderContainer(ValueListenableBuilder(
+        valueListenable: richTextController.orderListTypeApply,
+        builder: (context, value, _) {
           return Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -319,9 +327,7 @@ class RichTextOptionBottomSheet extends StatelessWidget {
               }, _imagePaths.icNumberOrder),
             ],
           );
-        },
-      ),
-    );
+        }));
   }
 
   Widget _buildVerticalDivider() {

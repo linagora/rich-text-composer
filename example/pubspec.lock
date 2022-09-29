@@ -89,9 +89,9 @@ packages:
     dependency: transitive
     description:
       path: "."
-      ref: improvements_for_use_tmail
-      resolved-ref: "44b44ed713ed60cfcfec15878ba1f8c7c01742df"
-      url: "https://github.com/ManhNTX/enough_html_editor.git"
+      ref: email_supported
+      resolved-ref: d8a9d89a872029082e6a7b90b1c916552682f0b8
+      url: "https://github.com/linagora/enough_html_editor.git"
     source: git
     version: "0.0.5"
   enough_platform_widgets:
@@ -179,13 +179,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  get:
-    dependency: transitive
-    description:
-      name: get
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "4.6.5"
   image:
     dependency: transitive
     description:
