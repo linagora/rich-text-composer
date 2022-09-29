@@ -9,6 +9,8 @@ import 'package:rich_text_composer/views/widgets/option_bottom_sheet.dart';
 import 'package:rich_text_composer/views/widgets/rich_text_keyboard_toolbar.dart';
 import 'package:enough_html_editor/enough_html_editor.dart' as html_editor;
 
+import 'list_color.dart';
+
 class RichTextOptionBottomSheet extends StatelessWidget {
   RichTextOptionBottomSheet({
     super.key,
@@ -37,7 +39,7 @@ class RichTextOptionBottomSheet extends StatelessWidget {
             children: [
               Expanded(child: _buildAlignStyle()),
               const SizedBox(width: 8),
-              Expanded(child: _buildColorStyle()),
+              Expanded(child: _buildColorStyle(context)),
             ],
           ),
           const SizedBox(height: 8),
@@ -197,17 +199,55 @@ class RichTextOptionBottomSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildColorStyle() {
+  Widget _buildColorStyle(BuildContext context) {
     return _buildBorderContainer(
-      Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _buildIconButton(false, () {}, _imagePaths.icTextColor),
-          _buildVerticalDivider(),
-          _buildIconButton(false, () {}, _imagePaths.icBackgroundColor),
-        ],
-      ),
+      Obx(() => Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildIconButton(
+                true,
+                () {
+                  showModalBottomSheet(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      backgroundColor: Colors.white,
+                      context: context,
+                      builder: (_) => ColorPickerKeyboard(
+                            title: 'Foreground',
+                            onSelected: (color) {
+                              richTextController.selectTextColor(color);
+                              Navigator.of(context).pop();
+                            },
+                          ));
+                },
+                _imagePaths.icTextColor,
+                iconColor: richTextController.selectedTextColor.value,
+              ),
+              _buildVerticalDivider(),
+              _buildIconButton(
+                true,
+                () {
+                  showModalBottomSheet(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      backgroundColor: Colors.white,
+                      context: context,
+                      builder: (_) => ColorPickerKeyboard(
+                            title: 'Background',
+                            onSelected: (color) {
+                              richTextController.selectBackgroundColor(color);
+                              Navigator.of(context).pop();
+                            },
+                          ));
+                },
+                _imagePaths.icBackgroundColor,
+                iconColor: richTextController.selectedTextBackgroundColor.value,
+              ),
+            ],
+          )),
     );
   }
 
@@ -260,15 +300,16 @@ class RichTextOptionBottomSheet extends StatelessWidget {
   }
 
   Widget _buildVerticalDivider() => Container(
-    width: 1,
-    color: CommonColor.colorBorderGray,
-  );
+        width: 1,
+        color: CommonColor.colorBorderGray,
+      );
 
   Widget _buildIconButton(
     bool isSelected,
     VoidCallback onTap,
-    String asset,
-  ) {
+    String asset, {
+    Color? iconColor,
+  }) {
     return Expanded(
       child: InkWell(
         onTap: onTap,
@@ -281,7 +322,7 @@ class RichTextOptionBottomSheet extends StatelessWidget {
             maxHeight: 28,
             child: SvgPicture.asset(
               asset,
-              color: isSelected ? CommonColor.colorIconSelect : null,
+              color: isSelected && iconColor == null ? CommonColor.colorIconSelect : iconColor,
               package: packageName,
               fit: BoxFit.contain,
             ),

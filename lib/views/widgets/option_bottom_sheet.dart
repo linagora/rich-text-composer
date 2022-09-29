@@ -9,10 +9,12 @@ class OptionBottomSheet extends StatelessWidget {
     Key? key,
     required this.title,
     required this.child,
+    this.padding = const EdgeInsets.all(16),
   }) : super(key: key);
 
   final String title;
   final Widget child;
+  final EdgeInsets padding;
   final ImagePaths _imagePaths = ImagePaths();
 
   @override
@@ -64,7 +66,7 @@ class OptionBottomSheet extends StatelessWidget {
           Container(color: CommonColor.colorBorderGray, height: 1),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: padding,
               child: child,
             ),
           ),
