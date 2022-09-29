@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:enough_html_editor/enough_html_editor.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' as ui;
 import 'package:get/get.dart';
 import 'package:rich_text_composer/views/widgets/rich_text_option_bottom_sheet.dart';
 
@@ -85,19 +85,19 @@ enum HeaderStyleType {
     }
   }
 
-  FontWeight get fontWeight {
+  ui.FontWeight get fontWeight {
     switch (this) {
       case HeaderStyleType.normal:
       case HeaderStyleType.blockquote:
       case HeaderStyleType.code:
-        return FontWeight.normal;
+        return ui.FontWeight.normal;
       case HeaderStyleType.h1:
       case HeaderStyleType.h2:
       case HeaderStyleType.h3:
       case HeaderStyleType.h4:
       case HeaderStyleType.h5:
       case HeaderStyleType.h6:
-        return FontWeight.bold;
+        return ui.FontWeight.bold;
     }
   }
 }
@@ -142,7 +142,8 @@ class RichTextController {
   final paragraphTypeApply = Rx<ParagraphType>(ParagraphType.alignLeft);
   final dentTypeApply = Rxn<DentType>();
   final orderListTypeApply = Rxn<OrderListType>();
-
+  final selectedTextColor = ui.Colors.black.obs;
+  final selectedTextBackgroundColor = ui.Colors.white.obs;
   final headerStyleTypeApply = Rx<HeaderStyleType>(HeaderStyleType.normal);
 
   final StreamController<bool> richTextStreamController =
@@ -185,6 +186,14 @@ class RichTextController {
     } else {
       listSpecialTextStyleApply.add(richTextStyleType);
     }
+  }
+
+  selectTextColor(ui.Color color) {
+    selectedTextColor.value = color;
+  }
+
+  selectBackgroundColor(ui.Color color) {
+    selectedTextBackgroundColor.value = color;
   }
 
   bool isTextStyleTypeSelected(SpecialStyleType richTextStyleType) {
@@ -241,14 +250,14 @@ class RichTextController {
     }
   }
 
-  void showRichTextBottomSheet(BuildContext context) async {
+  void showRichTextBottomSheet(ui.BuildContext context) async {
     await htmlEditorApi?.unfocus();
-    await showModalBottomSheet(
+    await ui.showModalBottomSheet(
       context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+      shape: ui.RoundedRectangleBorder(
+        borderRadius: ui.BorderRadius.circular(16),
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: ui.Colors.white,
       builder: (context) => RichTextOptionBottomSheet(
         richTextController: this,
         title: 'Format',
@@ -290,6 +299,14 @@ class RichTextController {
       default:
         return;
     }
+  }
+
+  Future<void> applyTextColor() async {
+    htmlEditorApi?.setColorTextForeground(selectedTextColor.value);
+  }
+
+  Future<void> applyBackgroundTextColor() async {
+    htmlEditorApi?.setColorTextBackground(selectedTextBackgroundColor.value);
   }
 
   selectOrderListType(OrderListType orderListType) {
@@ -345,6 +362,8 @@ class RichTextController {
     await applyDentType();
     await applyHeaderStyle();
     await appendSpecialRichText();
+    await applyTextColor();
+    await applyBackgroundTextColor();
     showRichTextView();
   }
 
