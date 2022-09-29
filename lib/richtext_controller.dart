@@ -5,135 +5,7 @@ import 'package:flutter/material.dart' as ui;
 import 'package:get/get.dart';
 import 'package:rich_text_composer/views/widgets/rich_text_option_bottom_sheet.dart';
 
-enum HeaderStyleType {
-  normal,
-  blockquote,
-  code,
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6;
-
-  String get styleName {
-    switch (this) {
-      case HeaderStyleType.normal:
-        return 'Normal';
-      case HeaderStyleType.blockquote:
-        return 'Quote';
-      case HeaderStyleType.code:
-        return 'Code';
-      case HeaderStyleType.h1:
-        return 'Header 1';
-      case HeaderStyleType.h2:
-        return 'Header 2';
-      case HeaderStyleType.h3:
-        return 'Header 3';
-      case HeaderStyleType.h4:
-        return 'Header 4';
-      case HeaderStyleType.h5:
-        return 'Header 5';
-      case HeaderStyleType.h6:
-        return 'Header 6';
-    }
-  }
-
-  String get styleValue {
-    switch (this) {
-      case HeaderStyleType.normal:
-        return 'div';
-      case HeaderStyleType.blockquote:
-        return 'blockquote';
-      case HeaderStyleType.code:
-        return 'pre';
-      case HeaderStyleType.h1:
-        return 'h1';
-      case HeaderStyleType.h2:
-        return 'h2';
-      case HeaderStyleType.h3:
-        return 'h3';
-      case HeaderStyleType.h4:
-        return 'h4';
-      case HeaderStyleType.h5:
-        return 'h5';
-      case HeaderStyleType.h6:
-        return 'h6';
-    }
-  }
-
-  double get textSize {
-    switch (this) {
-      case HeaderStyleType.normal:
-        return 16;
-      case HeaderStyleType.blockquote:
-        return 16;
-      case HeaderStyleType.code:
-        return 13;
-      case HeaderStyleType.h1:
-        return 32;
-      case HeaderStyleType.h2:
-        return 24;
-      case HeaderStyleType.h3:
-        return 18;
-      case HeaderStyleType.h4:
-        return 16;
-      case HeaderStyleType.h5:
-        return 13;
-      case HeaderStyleType.h6:
-        return 11;
-    }
-  }
-
-  ui.FontWeight get fontWeight {
-    switch (this) {
-      case HeaderStyleType.normal:
-      case HeaderStyleType.blockquote:
-      case HeaderStyleType.code:
-        return ui.FontWeight.normal;
-      case HeaderStyleType.h1:
-      case HeaderStyleType.h2:
-      case HeaderStyleType.h3:
-      case HeaderStyleType.h4:
-      case HeaderStyleType.h5:
-      case HeaderStyleType.h6:
-        return ui.FontWeight.bold;
-    }
-  }
-}
-
-enum SpecialStyleType {
-  bold,
-  italic,
-  underline,
-  strikeThrough;
-}
-
-enum ParagraphType {
-  alignLeft,
-  alignRight,
-  alignCenter,
-  justify;
-}
-
-enum DentType {
-  indent,
-  outdent;
-}
-
-enum OrderListType {
-  bulletedList,
-  numberedList;
-
-  String get commandAction {
-    switch (this) {
-      case OrderListType.bulletedList:
-        return 'insertUnorderedList';
-      case OrderListType.numberedList:
-        return 'insertOrderedList';
-    }
-  }
-}
+import 'models/types.dart';
 
 class RichTextController {
   HtmlEditorApi? htmlEditorApi;
@@ -149,7 +21,10 @@ class RichTextController {
   final StreamController<bool> richTextStreamController =
       StreamController<bool>();
 
-  final isSpecialStyleSelected = [false, false, false, false];
+  bool isBoldStyleAppended = false;
+  bool isItalicStyleAppended = false;
+  bool isUnderlineAppended = false;
+  bool isStrikeThroughAppended = false;
 
   final isOrderListSelected = [false, false];
 
@@ -157,25 +32,32 @@ class RichTextController {
 
   void listenHtmlEditorApi() {
     htmlEditorApi?.onFormatSettingsChanged = (formatSettings) {
-      listSpecialTextStyleApply.clear();
       if (formatSettings.isBold) {
-        isSpecialStyleSelected[0] = true;
+        isBoldStyleAppended = true;
         listSpecialTextStyleApply.add(SpecialStyleType.bold);
+      } else {
+        isBoldStyleAppended = false;
       }
 
       if (formatSettings.isItalic) {
-        isSpecialStyleSelected[1] = true;
+        isItalicStyleAppended = true;
         listSpecialTextStyleApply.add(SpecialStyleType.italic);
+      } else {
+        isItalicStyleAppended = false;
       }
 
       if (formatSettings.isUnderline) {
-        isSpecialStyleSelected[2] = true;
+        isUnderlineAppended = true;
         listSpecialTextStyleApply.add(SpecialStyleType.underline);
+      } else {
+        isUnderlineAppended = false;
       }
 
       if (formatSettings.isStrikeThrough) {
-        isSpecialStyleSelected[3] = true;
+        isStrikeThroughAppended = true;
         listSpecialTextStyleApply.add(SpecialStyleType.strikeThrough);
+      } else {
+        isStrikeThroughAppended = false;
       }
     };
   }
@@ -201,51 +83,19 @@ class RichTextController {
   }
 
   Future<void> appendSpecialRichText() async {
-    if (isTextStyleTypeSelected(SpecialStyleType.bold) &&
-        !isSpecialStyleSelected[0]) {
-      isSpecialStyleSelected[0] = true;
+    if (isTextStyleTypeSelected(SpecialStyleType.bold) != isBoldStyleAppended) {
       await htmlEditorApi?.formatBold();
     }
 
-    if (!isTextStyleTypeSelected(SpecialStyleType.bold) &&
-        isSpecialStyleSelected[0]) {
-      isSpecialStyleSelected[0] = false;
-      await htmlEditorApi?.formatBold();
-    }
-
-    if (isTextStyleTypeSelected(SpecialStyleType.italic) &&
-        !isSpecialStyleSelected[1]) {
-      isSpecialStyleSelected[1] = true;
+    if (isTextStyleTypeSelected(SpecialStyleType.italic) != isBoldStyleAppended) {
       await htmlEditorApi?.formatItalic();
     }
 
-    if (!isTextStyleTypeSelected(SpecialStyleType.italic) &&
-        isSpecialStyleSelected[1]) {
-      isSpecialStyleSelected[1] = false;
-      await htmlEditorApi?.formatItalic();
-    }
-
-    if (isTextStyleTypeSelected(SpecialStyleType.underline) &&
-        !isSpecialStyleSelected[2]) {
-      isSpecialStyleSelected[2] = true;
+    if (isTextStyleTypeSelected(SpecialStyleType.underline) != isUnderlineAppended) {
       await htmlEditorApi?.formatUnderline();
     }
 
-    if (!isTextStyleTypeSelected(SpecialStyleType.underline) &&
-        isSpecialStyleSelected[2]) {
-      isSpecialStyleSelected[2] = false;
-      await htmlEditorApi?.formatUnderline();
-    }
-
-    if (isTextStyleTypeSelected(SpecialStyleType.strikeThrough) &&
-        !isSpecialStyleSelected[3]) {
-      isSpecialStyleSelected[3] = true;
-      await htmlEditorApi?.formatStrikeThrough();
-    }
-
-    if (!isTextStyleTypeSelected(SpecialStyleType.strikeThrough) &&
-        isSpecialStyleSelected[3]) {
-      isSpecialStyleSelected[3] = false;
+    if (isTextStyleTypeSelected(SpecialStyleType.strikeThrough) != isStrikeThroughAppended) {
       await htmlEditorApi?.formatStrikeThrough();
     }
   }
@@ -268,8 +118,8 @@ class RichTextController {
         richTextController: this,
         title: titleFormatBottomSheet,
         titleQuickStyleBottomSheet: titleQuickStyleBottomSheet,
-          titleForegroundBottomSheet: titleForegroundBottomSheet,
-          titleBackgroundBottomSheet: titleBackgroundBottomSheet,
+        titleForegroundBottomSheet: titleForegroundBottomSheet,
+        titleBackgroundBottomSheet: titleBackgroundBottomSheet,
       ),
     );
   }

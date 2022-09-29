@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:rich_text_composer/rich_text_composer.dart';
 import 'package:rich_text_composer/views/commons/colors.dart';
 import 'package:rich_text_composer/views/widgets/option_bottom_sheet.dart';
+
+import '../../models/types.dart';
 
 class ListHeaderStyle extends StatelessWidget {
   const ListHeaderStyle({
