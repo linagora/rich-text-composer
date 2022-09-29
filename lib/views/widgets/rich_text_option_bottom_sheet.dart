@@ -9,6 +9,7 @@ import 'package:rich_text_composer/views/widgets/option_bottom_sheet.dart';
 import 'package:rich_text_composer/views/widgets/rich_text_keyboard_toolbar.dart';
 import 'package:enough_html_editor/enough_html_editor.dart' as html_editor;
 
+import '../../models/types.dart';
 import 'list_color.dart';
 
 class RichTextOptionBottomSheet extends StatelessWidget {
