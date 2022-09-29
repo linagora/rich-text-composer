@@ -250,7 +250,13 @@ class RichTextController {
     }
   }
 
-  void showRichTextBottomSheet(ui.BuildContext context) async {
+  void showRichTextBottomSheet({
+    required ui.BuildContext context,
+    required String titleFormatBottomSheet,
+    required String titleQuickStyleBottomSheet,
+    required String titleForegroundBottomSheet,
+    required String titleBackgroundBottomSheet,
+  }) async {
     await htmlEditorApi?.unfocus();
     await ui.showModalBottomSheet(
       context: context,
@@ -260,7 +266,10 @@ class RichTextController {
       backgroundColor: ui.Colors.white,
       builder: (context) => RichTextOptionBottomSheet(
         richTextController: this,
-        title: 'Format',
+        title: titleFormatBottomSheet,
+        titleQuickStyleBottomSheet: titleQuickStyleBottomSheet,
+          titleForegroundBottomSheet: titleForegroundBottomSheet,
+          titleBackgroundBottomSheet: titleBackgroundBottomSheet,
       ),
     );
   }
