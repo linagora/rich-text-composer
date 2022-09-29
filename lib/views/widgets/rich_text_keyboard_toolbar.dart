@@ -12,7 +12,10 @@ class RichTextKeyboardToolBar extends StatelessWidget {
   final VoidCallback insertImage;
   final VoidCallback insertAttachment;
   final ImagePaths _imagePaths = ImagePaths();
-
+  final String titleFormatBottomSheet;
+  final String titleQuickStyleBottomSheet;
+  final String titleForegroundBottomSheet;
+  final String titleBackgroundBottomSheet;
   final RichTextController richTextController;
 
   RichTextKeyboardToolBar({
@@ -21,6 +24,10 @@ class RichTextKeyboardToolBar extends StatelessWidget {
     required this.insertAttachment,
     this.isLandScapeMode,
     required this.richTextController,
+    required this.titleFormatBottomSheet,
+    required this.titleForegroundBottomSheet,
+    required this.titleBackgroundBottomSheet,
+    required this.titleQuickStyleBottomSheet,
   });
 
   @override
@@ -58,7 +65,13 @@ class RichTextKeyboardToolBar extends StatelessWidget {
             fit: BoxFit.fill,
           ),
           onTap: () {
-            richTextController.showRichTextBottomSheet(context);
+            richTextController.showRichTextBottomSheet(
+              context: context,
+              titleFormatBottomSheet: titleFormatBottomSheet,
+              titleQuickStyleBottomSheet: titleQuickStyleBottomSheet,
+              titleForegroundBottomSheet: titleForegroundBottomSheet,
+              titleBackgroundBottomSheet: titleBackgroundBottomSheet,
+            );
           },
         ),
       ],

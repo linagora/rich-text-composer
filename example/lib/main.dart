@@ -61,20 +61,18 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Flutter Demo Home Page'), actions: [
-        InkWell(
-            child: const Text('Unfucs'),
-            onTap: () {
-              richTextController.showRichTextBottomSheet(context);
-            })
-      ]),
+      appBar: AppBar(title: const Text('Flutter Demo Home Page')),
       body: KeyboardRichText(
         richTextController: richTextController,
         backgroundKeyboardToolBarColor: Colors.grey,
         keyBroadToolbar: RichTextKeyboardToolBar(
+          titleFormatBottomSheet: 'Format',
           richTextController: richTextController,
           insertImage: () {},
           insertAttachment: () {},
+          titleQuickStyleBottomSheet: 'Quick styles',
+          titleBackgroundBottomSheet: 'Background',
+          titleForegroundBottomSheet: 'Foreground',
         ),
         child: SingleChildScrollView(
           child: HtmlEditor(
