@@ -9,8 +9,8 @@ const String packageName = 'rich_text_composer';
 
 class RichTextKeyboardToolBar extends StatelessWidget {
   final bool? isLandScapeMode;
-  final VoidCallback insertImage;
-  final VoidCallback insertAttachment;
+  final VoidCallback? insertImage;
+  final VoidCallback? insertAttachment;
   final ImagePaths _imagePaths = ImagePaths();
   final String titleFormatBottomSheet;
   final String titleQuickStyleBottomSheet;
@@ -20,8 +20,8 @@ class RichTextKeyboardToolBar extends StatelessWidget {
 
   RichTextKeyboardToolBar({
     super.key,
-    required this.insertImage,
-    required this.insertAttachment,
+    this.insertImage,
+    this.insertAttachment,
     this.isLandScapeMode,
     required this.richTextController,
     required this.titleFormatBottomSheet,
@@ -37,25 +37,27 @@ class RichTextKeyboardToolBar extends StatelessWidget {
           ? MainAxisAlignment.spaceEvenly
           : MainAxisAlignment.start,
       children: [
-        _buildIcon(
-          iconPadding: EdgeInsets.zero,
-          icon: SvgPicture.asset(
-            _imagePaths.icAttachmentsComposer,
-            color: Colors.black,
-            fit: BoxFit.fill,
-            package: packageName,
+        if (insertAttachment != null)
+          _buildIcon(
+            iconPadding: EdgeInsets.zero,
+            icon: SvgPicture.asset(
+              _imagePaths.icAttachmentsComposer,
+              color: Colors.black,
+              fit: BoxFit.fill,
+              package: packageName,
+            ),
+            onTap: () => insertAttachment?.call(),
           ),
-          onTap: () => insertAttachment(),
-        ),
-        _buildIcon(
-          iconPadding: EdgeInsets.zero,
-          icon: SvgPicture.asset(
-            _imagePaths.icInsertImage,
-            fit: BoxFit.fill,
-            package: packageName,
+        if (insertImage != null)
+          _buildIcon(
+            iconPadding: EdgeInsets.zero,
+            icon: SvgPicture.asset(
+              _imagePaths.icInsertImage,
+              fit: BoxFit.fill,
+              package: packageName,
+            ),
+            onTap: () => insertImage?.call(),
           ),
-          onTap: () => insertImage(),
-        ),
         _buildIcon(
           iconPadding: EdgeInsets.zero,
           icon: SvgPicture.asset(

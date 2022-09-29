@@ -13,11 +13,11 @@ dependencies:
     sdk: flutter
   flutter_keyboard_visibility: 5.2.0
   flutter_svg: 1.1.0
-  get: 4.6.5
+
   enough_html_editor:
     git:
-      url: https://github.com/ManhNTX/enough_html_editor.git
-      ref: improvements_for_use_tmail
+      url: https://github.com/linagora/enough_html_editor.git
+      ref: email_supported
 dev_dependencies:
   flutter_test:
     sdk: flutter

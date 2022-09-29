@@ -68,8 +68,6 @@ class _MyHomePageState extends State<MyHomePage> {
         keyBroadToolbar: RichTextKeyboardToolBar(
           titleFormatBottomSheet: 'Format',
           richTextController: richTextController,
-          insertImage: () {},
-          insertAttachment: () {},
           titleQuickStyleBottomSheet: 'Quick styles',
           titleBackgroundBottomSheet: 'Background',
           titleForegroundBottomSheet: 'Foreground',
