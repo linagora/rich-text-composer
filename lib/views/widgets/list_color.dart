@@ -31,19 +31,18 @@ class ColorPickerKeyboard extends StatelessWidget
             height: _kKeyboardHeight,
             child: Wrap(
               direction: Axis.vertical,
-              children: <Widget>[
-                for (final color in listColor)
-                  GestureDetector(
-                    onTap: (){
-                      onSelected.call(color);
-                    },
-                    child: Container(
-                      color: color,
-                      width: itemWidth,
-                      height: itemHeight,
-                    ),
-                  )
-              ],
+              children: listColor
+                  .map((color) => GestureDetector(
+                        onTap: () {
+                          onSelected.call(color);
+                        },
+                        child: Container(
+                          color: color,
+                          width: itemWidth,
+                          height: itemHeight,
+                        ),
+                      ))
+                  .toList(),
             ),
           ),
           const Spacer(),

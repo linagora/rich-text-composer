@@ -2,10 +2,9 @@ name: rich_text_composer
 description: A new Flutter project.
 version: 0.0.1
 publish_to: none
-homepage:
 
 environment:
-  sdk: ">=2.17.6 <3.0.0"
+  sdk: ">=2.17.0 <3.0.0"
   flutter: ">=1.17.0"
 
 dependencies:
