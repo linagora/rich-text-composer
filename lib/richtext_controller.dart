@@ -11,8 +11,7 @@ class RichTextController {
   HtmlEditorApi? htmlEditorApi;
 
   final listSpecialTextStyleApply = ValueNotifier<Set<SpecialStyleType>>({});
-  final paragraphTypeApply =
-      ValueNotifier<ParagraphType>(ParagraphType.alignLeft);
+  final paragraphTypeApply = ValueNotifier<ParagraphType>(ParagraphType.alignLeft);
   final dentTypeApply = ValueNotifier<DentType?>(null);
   final orderListTypeApply = ValueNotifier<OrderListType?>(null);
   final selectedTextColor = ValueNotifier<ui.Color>(ui.Colors.black);
@@ -27,6 +26,7 @@ class RichTextController {
   bool isItalicStyleAppended = false;
   bool isUnderlineAppended = false;
   bool isStrikeThroughAppended = false;
+  int _currentLine = 1;
 
   Stream<bool> get richTextStream => richTextStreamController.stream;
 
@@ -206,7 +206,7 @@ class RichTextController {
     richTextStreamController.sink.add(false);
   }
 
-  Future<void> editorOnFocus() async {
+  Future<void> editorOnFocus(VoidCallback? onFocus) async {
     await Future.wait([
       applyParagraphType(),
       applyOrderListType(),
@@ -216,12 +216,31 @@ class RichTextController {
       applyTextColor(),
       applyBackgroundTextColor(),
     ]);
+    onFocus?.call();
     showRichTextView();
   }
 
-  void onCreateHTMLEditor(HtmlEditorApi editorApi) {
+  void onCreateHTMLEditor(
+    HtmlEditorApi editorApi, {
+    ScrollController? scrollController,
+    VoidCallback? onFocus,
+    VoidCallback? onEnterKeyDown,
+  }) {
     htmlEditorApi = editorApi;
-    editorApi.onFocus = editorOnFocus;
+    editorApi.onFocus = () {
+      editorOnFocus.call(onFocus);
+    };
+
+    editorApi.onKeyDown = () {
+      scrollController?.animateTo(
+        _currentLine * 20,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.ease,
+      );
+      _currentLine++;
+      onEnterKeyDown?.call();
+    };
+
     editorApi.onFocusOut = () {
       hideRichTextView();
     };
