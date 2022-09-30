@@ -11,12 +11,14 @@ class RichTextController {
   HtmlEditorApi? htmlEditorApi;
 
   final listSpecialTextStyleApply = ValueNotifier<Set<SpecialStyleType>>({});
-  final paragraphTypeApply = ValueNotifier<ParagraphType>(ParagraphType.alignLeft);
+  final paragraphTypeApply =
+      ValueNotifier<ParagraphType>(ParagraphType.alignLeft);
   final dentTypeApply = ValueNotifier<DentType?>(null);
   final orderListTypeApply = ValueNotifier<OrderListType?>(null);
   final selectedTextColor = ValueNotifier<ui.Color>(ui.Colors.black);
   final selectedTextBackgroundColor = ValueNotifier<ui.Color>(ui.Colors.white);
-  final headerStyleTypeApply = ValueNotifier<HeaderStyleType>(HeaderStyleType.normal);
+  final headerStyleTypeApply =
+      ValueNotifier<HeaderStyleType>(HeaderStyleType.normal);
 
   final StreamController<bool> richTextStreamController =
       StreamController<bool>();
@@ -32,66 +34,56 @@ class RichTextController {
     htmlEditorApi?.onFormatSettingsChanged = (formatSettings) {
       if (formatSettings.isBold) {
         isBoldStyleAppended = true;
-        listSpecialTextStyleApply.value.add(SpecialStyleType.bold);
-        listSpecialTextStyleApply.notifyListeners();
+        listSpecialTextStyleApply.value = Set.from(listSpecialTextStyleApply.value)..add(SpecialStyleType.bold);
       } else {
-        listSpecialTextStyleApply.value.remove(SpecialStyleType.bold);
+        listSpecialTextStyleApply.value = Set.from(listSpecialTextStyleApply.value)..remove(SpecialStyleType.bold);
         isBoldStyleAppended = false;
-        listSpecialTextStyleApply.notifyListeners();
       }
 
       if (formatSettings.isItalic) {
         isItalicStyleAppended = true;
-        listSpecialTextStyleApply.value.add(SpecialStyleType.italic);
-        listSpecialTextStyleApply.notifyListeners();
+        listSpecialTextStyleApply.value = Set.from(listSpecialTextStyleApply.value)..add(SpecialStyleType.italic);
       } else {
-        listSpecialTextStyleApply.value.remove(SpecialStyleType.italic);
         isItalicStyleAppended = false;
-        listSpecialTextStyleApply.notifyListeners();
+        listSpecialTextStyleApply.value = Set.from(listSpecialTextStyleApply.value)..remove(SpecialStyleType.italic);
       }
 
       if (formatSettings.isUnderline) {
         isUnderlineAppended = true;
-        listSpecialTextStyleApply.value.add(SpecialStyleType.underline);
-        listSpecialTextStyleApply.notifyListeners();
+        listSpecialTextStyleApply.value = Set.from(listSpecialTextStyleApply.value)..add(SpecialStyleType.underline);
       } else {
-        listSpecialTextStyleApply.value.remove(SpecialStyleType.underline);
+        listSpecialTextStyleApply.value = Set.from(listSpecialTextStyleApply.value)..remove(SpecialStyleType.underline);
         isUnderlineAppended = false;
-        listSpecialTextStyleApply.notifyListeners();
       }
 
       if (formatSettings.isStrikeThrough) {
         isStrikeThroughAppended = true;
-        listSpecialTextStyleApply.value.add(SpecialStyleType.strikeThrough);
-        listSpecialTextStyleApply.notifyListeners();
+        listSpecialTextStyleApply.value = Set.from(listSpecialTextStyleApply.value)..add(SpecialStyleType.strikeThrough);
       } else {
-        listSpecialTextStyleApply.value.remove(SpecialStyleType.strikeThrough);
+        listSpecialTextStyleApply.value = Set.from(listSpecialTextStyleApply.value)..remove(SpecialStyleType.strikeThrough);
         isStrikeThroughAppended = false;
-        listSpecialTextStyleApply.notifyListeners();
       }
     };
   }
 
-  selectTextStyleType(SpecialStyleType richTextStyleType) {
+  void selectTextStyleType(SpecialStyleType richTextStyleType) {
     if (listSpecialTextStyleApply.value.contains(richTextStyleType)) {
-      listSpecialTextStyleApply.value.remove(richTextStyleType);
+      listSpecialTextStyleApply.value = Set.from(listSpecialTextStyleApply.value)..remove(richTextStyleType);
     } else {
-      listSpecialTextStyleApply.value.add(richTextStyleType);
+      listSpecialTextStyleApply.value = Set.from(listSpecialTextStyleApply.value)..add(richTextStyleType);
     }
-    listSpecialTextStyleApply.notifyListeners();
   }
 
-  selectTextColor(ui.Color color) {
+  void selectTextColor(ui.Color color) {
     selectedTextColor.value = color;
   }
 
-  selectBackgroundColor(ui.Color color) {
+  void selectBackgroundColor(ui.Color color) {
     selectedTextBackgroundColor.value = color;
   }
 
   bool isTextStyleTypeSelected(SpecialStyleType richTextStyleType) {
     return listSpecialTextStyleApply.value.contains(richTextStyleType);
-
   }
 
   Future<void> appendSpecialRichText() async {
@@ -99,15 +91,18 @@ class RichTextController {
       await htmlEditorApi?.formatBold();
     }
 
-    if (isTextStyleTypeSelected(SpecialStyleType.italic) != isItalicStyleAppended) {
+    if (isTextStyleTypeSelected(SpecialStyleType.italic) !=
+        isItalicStyleAppended) {
       await htmlEditorApi?.formatItalic();
     }
 
-    if (isTextStyleTypeSelected(SpecialStyleType.underline) != isUnderlineAppended) {
+    if (isTextStyleTypeSelected(SpecialStyleType.underline) !=
+        isUnderlineAppended) {
       await htmlEditorApi?.formatUnderline();
     }
 
-    if (isTextStyleTypeSelected(SpecialStyleType.strikeThrough) != isStrikeThroughAppended) {
+    if (isTextStyleTypeSelected(SpecialStyleType.strikeThrough) !=
+        isStrikeThroughAppended) {
       await htmlEditorApi?.formatStrikeThrough();
     }
   }
@@ -180,7 +175,7 @@ class RichTextController {
     htmlEditorApi?.setColorTextBackground(selectedTextBackgroundColor.value);
   }
 
-  selectOrderListType(OrderListType orderListType) {
+  void selectOrderListType(OrderListType orderListType) {
     if (orderListTypeApply.value == orderListType) {
       orderListTypeApply.value = null;
     } else {
@@ -191,12 +186,12 @@ class RichTextController {
   Future<void> applyOrderListType() async {
     switch (orderListTypeApply.value) {
       case OrderListType.bulletedList:
-          await htmlEditorApi?.insertUnorderedList();
-          orderListTypeApply.value = null;
+        await htmlEditorApi?.insertUnorderedList();
+        orderListTypeApply.value = null;
         return;
       case OrderListType.numberedList:
-          await htmlEditorApi?.insertOrderedList();
-          orderListTypeApply.value = null;
+        await htmlEditorApi?.insertOrderedList();
+        orderListTypeApply.value = null;
         return;
       default:
         return;
@@ -212,13 +207,15 @@ class RichTextController {
   }
 
   Future<void> editorOnFocus() async {
-    await applyParagraphType();
-    await applyOrderListType();
-    await applyDentType();
-    await applyHeaderStyle();
-    await appendSpecialRichText();
-    await applyTextColor();
-    await applyBackgroundTextColor();
+    await Future.wait([
+      applyParagraphType(),
+      applyOrderListType(),
+      applyDentType(),
+      applyHeaderStyle(),
+      appendSpecialRichText(),
+      applyTextColor(),
+      applyBackgroundTextColor(),
+    ]);
     showRichTextView();
   }
 
