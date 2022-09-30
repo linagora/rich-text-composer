@@ -230,5 +230,12 @@ class RichTextController {
 
   void dispose() {
     richTextStreamController.close();
+    listSpecialTextStyleApply.dispose();
+    paragraphTypeApply.dispose();
+    dentTypeApply.dispose();
+    orderListTypeApply.dispose();
+    selectedTextColor.dispose();
+    selectedTextBackgroundColor.dispose();
+    headerStyleTypeApply.dispose();
   }
 }
