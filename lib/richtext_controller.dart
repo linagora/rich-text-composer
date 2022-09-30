@@ -21,7 +21,7 @@ class RichTextController {
       ValueNotifier<HeaderStyleType>(HeaderStyleType.normal);
 
   final StreamController<bool> richTextStreamController =
-      StreamController<bool>();
+      StreamController<bool>.broadcast();
 
   bool isBoldStyleAppended = false;
   bool isItalicStyleAppended = false;
