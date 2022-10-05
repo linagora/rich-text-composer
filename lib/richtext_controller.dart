@@ -19,12 +19,13 @@ class RichTextController {
   final headerStyleTypeApply = ValueNotifier<HeaderStyleType>(HeaderStyleType.normal);
   final StreamController<bool> richTextStreamController = StreamController<bool>();
 
-  int currentHTMLEditorPosition = 0;
   bool isBoldStyleAppended = false;
   bool isItalicStyleAppended = false;
   bool isUnderlineAppended = false;
   bool isStrikeThroughAppended = false;
   int _currentLine = 1;
+
+  int get currentLine => _currentLine;
 
   Stream<bool> get richTextStream => richTextStreamController.stream;
 
@@ -220,7 +221,6 @@ class RichTextController {
 
   void onCreateHTMLEditor(
     HtmlEditorApi editorApi, {
-    ScrollController? scrollController,
     VoidCallback? onFocus,
     VoidCallback? onEnterKeyDown,
   }) {
@@ -230,13 +230,8 @@ class RichTextController {
     };
 
     editorApi.onKeyDown = () {
-      scrollController?.animateTo(
-        currentHTMLEditorPosition + _currentLine * 20,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.ease,
-      );
-      _currentLine++;
       onEnterKeyDown?.call();
+      _currentLine++;
     };
 
     editorApi.onFocusOut = () {
