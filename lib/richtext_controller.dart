@@ -16,12 +16,10 @@ class RichTextController {
   final orderListTypeApply = ValueNotifier<OrderListType?>(null);
   final selectedTextColor = ValueNotifier<ui.Color>(ui.Colors.black);
   final selectedTextBackgroundColor = ValueNotifier<ui.Color>(ui.Colors.white);
-  final headerStyleTypeApply =
-      ValueNotifier<HeaderStyleType>(HeaderStyleType.normal);
+  final headerStyleTypeApply = ValueNotifier<HeaderStyleType>(HeaderStyleType.normal);
+  final StreamController<bool> richTextStreamController = StreamController<bool>();
 
-  final StreamController<bool> richTextStreamController =
-      StreamController<bool>.broadcast();
-
+  int currentHTMLEditorPosition = 0;
   bool isBoldStyleAppended = false;
   bool isItalicStyleAppended = false;
   bool isUnderlineAppended = false;
@@ -233,7 +231,7 @@ class RichTextController {
 
     editorApi.onKeyDown = () {
       scrollController?.animateTo(
-        _currentLine * 20,
+        currentHTMLEditorPosition + _currentLine * 20,
         duration: const Duration(milliseconds: 300),
         curve: Curves.ease,
       );
