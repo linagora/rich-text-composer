@@ -8,6 +8,7 @@ import 'package:rich_text_composer/views/widgets/rich_text_option_bottom_sheet.d
 import 'models/types.dart';
 
 const double defaultKeyboardToolbarHeight = 48;
+const double defaultKeyboardHeight = 300;
 
 class RichTextController {
   HtmlEditorApi? htmlEditorApi;
