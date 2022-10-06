@@ -7,6 +7,8 @@ import 'package:rich_text_composer/views/widgets/rich_text_option_bottom_sheet.d
 
 import 'models/types.dart';
 
+const double defaultKeyboardToolbarHeight = 48;
+
 class RichTextController {
   HtmlEditorApi? htmlEditorApi;
 
@@ -17,7 +19,7 @@ class RichTextController {
   final selectedTextColor = ValueNotifier<ui.Color>(ui.Colors.black);
   final selectedTextBackgroundColor = ValueNotifier<ui.Color>(ui.Colors.white);
   final headerStyleTypeApply = ValueNotifier<HeaderStyleType>(HeaderStyleType.normal);
-  final StreamController<bool> richTextStreamController = StreamController<bool>();
+  final StreamController<bool> richTextStreamController = StreamController<bool>.broadcast();
 
   bool isBoldStyleAppended = false;
   bool isItalicStyleAppended = false;
