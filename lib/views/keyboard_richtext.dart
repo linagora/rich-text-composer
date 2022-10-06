@@ -11,7 +11,7 @@ class KeyboardRichText extends StatelessWidget {
     required this.richTextController,
     required this.backgroundKeyboardToolBarColor,
     required this.keyBroadToolbar,
-    this.heightToolBar = 48,
+    this.heightToolBar = defaultKeyboardToolbarHeight,
   }) : super(key: key);
 
   final Widget child;
