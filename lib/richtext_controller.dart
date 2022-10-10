@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:enough_html_editor/enough_html_editor.dart';
 import 'package:flutter/material.dart' as ui;
 import 'package:flutter/material.dart';
+import 'package:rich_text_composer/views/commons/utils/responsive_utils.dart';
 import 'package:rich_text_composer/views/widgets/rich_text_option_bottom_sheet.dart';
 
 import 'models/types.dart';
@@ -20,6 +21,8 @@ class RichTextController {
   final selectedTextBackgroundColor = ValueNotifier<ui.Color>(ui.Colors.white);
   final headerStyleTypeApply = ValueNotifier<HeaderStyleType>(HeaderStyleType.normal);
   final StreamController<bool> richTextStreamController = StreamController<bool>.broadcast();
+
+  final ResponsiveUtils responsiveUtils = ResponsiveUtils();
 
   bool isBoldStyleAppended = false;
   bool isItalicStyleAppended = false;
