@@ -5,6 +5,7 @@ import 'package:rich_text_composer/views/commons/colors.dart';
 import 'package:rich_text_composer/views/commons/image_paths.dart';
 import 'package:rich_text_composer/views/widgets/list_header_style.dart';
 import 'package:rich_text_composer/views/widgets/option_bottom_sheet.dart';
+import 'package:rich_text_composer/views/widgets/responsive/responsive_widget.dart';
 import 'package:rich_text_composer/views/widgets/rich_text_keyboard_toolbar.dart';
 import 'package:enough_html_editor/enough_html_editor.dart' as html_editor;
 
@@ -34,30 +35,65 @@ class RichTextOptionBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return OptionBottomSheet(
       title: title,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildSpecialStyle(),
-          const SizedBox(height: 8),
-          _buildQuickStyle(context),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(child: _buildAlignStyle()),
-              const SizedBox(width: 8),
-              Expanded(child: _buildColorStyle(context)),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(child: _buildFormatStyle()),
-              const SizedBox(width: 8),
-              Expanded(child: _buildOrderListStyle()),
-            ],
-          )
-        ],
+      child: ResponsiveWidget(
+        responsiveUtils: richTextController.responsiveUtils,
+        mobile: _buildBodyForMobile(context),
+        landscapeMobile: _buildBodyForLandscapeMobile(context),
       ),
+    );
+  }
+
+  Widget _buildBodyForMobile(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSpecialStyle(),
+        const SizedBox(height: 8),
+        _buildQuickStyle(context),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(child: _buildAlignStyle()),
+            const SizedBox(width: 8),
+            Expanded(child: _buildColorStyle(context)),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(child: _buildFormatStyle()),
+            const SizedBox(width: 8),
+            Expanded(child: _buildOrderListStyle()),
+          ],
+        )
+      ],
+    );
+  }
+
+  Widget _buildBodyForLandscapeMobile(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(child: _buildSpecialStyle()),
+            const SizedBox(width: 8),
+            Expanded(child: _buildQuickStyle(context)),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(child: _buildAlignStyle()),
+            const SizedBox(width: 8),
+            Expanded(child: _buildColorStyle(context)),
+            const SizedBox(width: 8),
+            Expanded(child: _buildFormatStyle()),
+            const SizedBox(width: 8),
+            Expanded(child: _buildOrderListStyle()),
+          ],
+        ),
+      ],
     );
   }
 
@@ -135,6 +171,8 @@ class RichTextOptionBottomSheet extends StatelessWidget {
       InkWell(
         onTap: () {
           showModalBottomSheet(
+            isScrollControlled:
+                richTextController.responsiveUtils.isLandscapeMobile(context),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
@@ -228,8 +266,14 @@ class RichTextOptionBottomSheet extends StatelessWidget {
                   true,
                   () {
                     showModalBottomSheet(
+                        isScrollControlled: richTextController.responsiveUtils
+                            .isLandscapeMobile(context),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
+                        ),
+                        constraints: const BoxConstraints(
+                          maxHeight: 300,
+                          maxWidth: 700,
                         ),
                         backgroundColor: Colors.white,
                         context: context,
@@ -255,8 +299,14 @@ class RichTextOptionBottomSheet extends StatelessWidget {
                   true,
                   () {
                     showModalBottomSheet(
+                        isScrollControlled: richTextController.responsiveUtils
+                            .isLandscapeMobile(context),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
+                        ),
+                        constraints: const BoxConstraints(
+                          maxHeight: 300,
+                          maxWidth: 700,
                         ),
                         backgroundColor: Colors.white,
                         context: context,
