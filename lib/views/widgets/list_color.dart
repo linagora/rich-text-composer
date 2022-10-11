@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 
-import 'option_bottom_sheet.dart';
-
 class ColorPickerKeyboard extends StatelessWidget
     implements PreferredSizeWidget {
   static const double _kKeyboardHeight = 200;
   final Function(Color) onSelected;
-  final String title;
 
   const ColorPickerKeyboard({
     Key? key,
     required this.onSelected,
-    required this.title,
   }) : super(key: key);
 
   @override
@@ -21,33 +17,29 @@ class ColorPickerKeyboard extends StatelessWidget
     const double itemHeight = _kKeyboardHeight / 10;
     final List<Color> listColor = List.empty(growable: true);
     _createListColor(listColor);
-    return OptionBottomSheet(
-      title: title,
-      padding: const EdgeInsets.all(0),
-      child: Column(
-        children: [
-          const Spacer(),
-          SizedBox(
-            height: _kKeyboardHeight,
-            child: Wrap(
-              direction: Axis.vertical,
-              children: listColor
-                  .map((color) => GestureDetector(
-                        onTap: () {
-                          onSelected.call(color);
-                        },
-                        child: Container(
-                          color: color,
-                          width: itemWidth,
-                          height: itemHeight,
-                        ),
-                      ))
-                  .toList(),
-            ),
+    return Column(
+      children: [
+        const Spacer(),
+        SizedBox(
+          height: _kKeyboardHeight,
+          child: Wrap(
+            direction: Axis.vertical,
+            children: listColor
+                .map((color) => GestureDetector(
+              onTap: () {
+                onSelected.call(color);
+              },
+              child: Container(
+                color: color,
+                width: itemWidth,
+                height: itemHeight,
+              ),
+            ))
+                .toList(),
           ),
-          const Spacer(),
-        ],
-      ),
+        ),
+        const Spacer(),
+      ],
     );
   }
 

@@ -64,8 +64,8 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(title: const Text('Flutter Demo Home Page')),
       body: KeyboardRichText(
         richTextController: richTextController,
-        backgroundKeyboardToolBarColor: Colors.grey,
         keyBroadToolbar: RichTextKeyboardToolBar(
+          backgroundKeyboardToolBarColor: Colors.grey,
           titleFormatBottomSheet: 'Format',
           richTextController: richTextController,
           titleQuickStyleBottomSheet: 'Quick styles',
