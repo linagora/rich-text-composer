@@ -4,7 +4,8 @@ import 'package:enough_html_editor/enough_html_editor.dart';
 import 'package:flutter/material.dart' as ui;
 import 'package:flutter/material.dart';
 import 'package:rich_text_composer/views/commons/utils/responsive_utils.dart';
-import 'package:rich_text_composer/views/widgets/rich_text_option_bottom_sheet.dart';
+import 'package:rich_text_composer/views/widgets/mobile/option_bottom_sheet.dart';
+import 'package:rich_text_composer/views/widgets/mobile/rich_text_option.dart';
 
 import 'models/types.dart';
 
@@ -17,6 +18,7 @@ class RichTextController {
   final paragraphTypeApply = ValueNotifier<ParagraphType>(ParagraphType.alignLeft);
   final dentTypeApply = ValueNotifier<DentType?>(null);
   final orderListTypeApply = ValueNotifier<OrderListType?>(null);
+  final applyRichTextOptionForTablet = ValueNotifier<bool>(false);
   final selectedTextColor = ValueNotifier<ui.Color>(ui.Colors.black);
   final selectedTextBackgroundColor = ValueNotifier<ui.Color>(ui.Colors.white);
   final headerStyleTypeApply = ValueNotifier<HeaderStyleType>(HeaderStyleType.normal);
@@ -125,12 +127,14 @@ class RichTextController {
         borderRadius: ui.BorderRadius.circular(16),
       ),
       backgroundColor: ui.Colors.white,
-      builder: (context) => RichTextOptionBottomSheet(
-        richTextController: this,
+      builder: (context) => OptionBottomSheet(
         title: titleFormatBottomSheet,
-        titleQuickStyleBottomSheet: titleQuickStyleBottomSheet,
-        titleForegroundBottomSheet: titleForegroundBottomSheet,
-        titleBackgroundBottomSheet: titleBackgroundBottomSheet,
+        child: RichTextOption(
+          richTextController: this,
+          titleQuickStyleBottomSheet: titleQuickStyleBottomSheet,
+          titleForegroundBottomSheet: titleForegroundBottomSheet,
+          titleBackgroundBottomSheet: titleBackgroundBottomSheet,
+        ),
       ),
     );
   }
@@ -247,6 +251,7 @@ class RichTextController {
 
   void dispose() {
     richTextStreamController.close();
+    applyRichTextOptionForTablet.dispose();
     listSpecialTextStyleApply.dispose();
     paragraphTypeApply.dispose();
     dentTypeApply.dispose();

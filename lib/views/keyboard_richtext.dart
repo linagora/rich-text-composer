@@ -9,22 +9,21 @@ class KeyboardRichText extends StatelessWidget {
     Key? key,
     required this.child,
     required this.richTextController,
-    required this.backgroundKeyboardToolBarColor,
     required this.keyBroadToolbar,
-    this.heightToolBar = defaultKeyboardToolbarHeight,
   }) : super(key: key);
 
   final Widget child;
   final Widget keyBroadToolbar;
   final RichTextController richTextController;
-  final Color backgroundKeyboardToolBarColor;
-  final double? heightToolBar;
 
   @override
   Widget build(BuildContext context) {
     return KeyboardVisibilityBuilder(builder: (context, isKeyboardVisible) {
       return Stack(children: <Widget>[
-        child,
+        SizedBox(
+          height: double.infinity,
+          child: child,
+        ),
         Positioned(
           bottom: MediaQuery.of(context).viewInsets.bottom,
           left: 0,
@@ -36,16 +35,12 @@ class KeyboardRichText extends StatelessWidget {
                 visible: snapshot.hasData &&
                     snapshot.data == true &&
                     isKeyboardVisible,
-                child: Container(
-                  height: heightToolBar,
-                  color: backgroundKeyboardToolBarColor,
-                  alignment: Alignment.centerLeft,
-                  child: keyBroadToolbar,
-                ),
+                child: keyBroadToolbar,
               );
             },
           ),
         ),
+
       ]);
     });
   }

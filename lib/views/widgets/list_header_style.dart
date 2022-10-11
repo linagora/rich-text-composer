@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:rich_text_composer/views/commons/colors.dart';
-import 'package:rich_text_composer/views/widgets/option_bottom_sheet.dart';
 
 import '../../models/types.dart';
 
@@ -8,29 +7,24 @@ class ListHeaderStyle extends StatelessWidget {
   const ListHeaderStyle({
     Key? key,
     required this.itemSelected,
-    required this.title,
   }) : super(key: key);
   final Function(HeaderStyleType) itemSelected;
-  final String title;
 
   @override
   Widget build(BuildContext context) {
-    return OptionBottomSheet(
-      title: title,
-      child: ListView.builder(
-        itemCount: HeaderStyleType.values.length,
-        itemBuilder: (context, index) {
-          final item = HeaderStyleType.values[index];
-          return InkWell(
-              onTap: () {
-                itemSelected.call(item);
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: _buildItemDropdown(item),
-              ));
-        },
-      ),
+    return ListView.builder(
+      itemCount: HeaderStyleType.values.length,
+      itemBuilder: (context, index) {
+        final item = HeaderStyleType.values[index];
+        return InkWell(
+            onTap: () {
+              itemSelected.call(item);
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: _buildItemDropdown(item),
+            ));
+      },
     );
   }
 

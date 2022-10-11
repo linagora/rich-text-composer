@@ -4,18 +4,17 @@ import 'package:rich_text_composer/richtext_controller.dart';
 import 'package:rich_text_composer/views/commons/colors.dart';
 import 'package:rich_text_composer/views/commons/image_paths.dart';
 import 'package:rich_text_composer/views/widgets/list_header_style.dart';
-import 'package:rich_text_composer/views/widgets/option_bottom_sheet.dart';
+import 'package:rich_text_composer/views/widgets/mobile/option_bottom_sheet.dart';
 import 'package:rich_text_composer/views/widgets/responsive/responsive_widget.dart';
 import 'package:rich_text_composer/views/widgets/rich_text_keyboard_toolbar.dart';
 import 'package:enough_html_editor/enough_html_editor.dart' as html_editor;
 
-import '../../models/types.dart';
-import 'list_color.dart';
+import '../../../models/types.dart';
+import '../list_color.dart';
 
-class RichTextOptionBottomSheet extends StatelessWidget {
-  RichTextOptionBottomSheet({
+class RichTextOption extends StatelessWidget {
+  RichTextOption({
     super.key,
-    required this.title,
     this.htmlEditorApi,
     required this.richTextController,
     required this.titleQuickStyleBottomSheet,
@@ -23,7 +22,6 @@ class RichTextOptionBottomSheet extends StatelessWidget {
     required this.titleBackgroundBottomSheet,
   });
 
-  final String title;
   final String titleQuickStyleBottomSheet;
   final String titleForegroundBottomSheet;
   final String titleBackgroundBottomSheet;
@@ -33,13 +31,12 @@ class RichTextOptionBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return OptionBottomSheet(
-      title: title,
-      child: ResponsiveWidget(
-        responsiveUtils: richTextController.responsiveUtils,
-        mobile: _buildBodyForMobile(context),
-        landscapeMobile: _buildBodyForLandscapeMobile(context),
-      ),
+    return ResponsiveWidget(
+      responsiveUtils: richTextController.responsiveUtils,
+      mobile: _buildBodyForMobile(context),
+      landscapeMobile: _buildBodyForLandscapeMobile(context),
+      landscapeTablet: _buildBodyForMobile(context),
+      tablet: _buildBodyForMobile(context),
     );
   }
 
@@ -179,12 +176,14 @@ class RichTextOptionBottomSheet extends StatelessWidget {
             backgroundColor: Colors.white,
             context: context,
             builder: (_) {
-              return ListHeaderStyle(
+              return OptionBottomSheet(
                 title: titleQuickStyleBottomSheet,
-                itemSelected: (item) {
-                  Navigator.of(context).pop();
-                  richTextController.headerStyleTypeApply.value = item;
-                },
+                child: ListHeaderStyle(
+                  itemSelected: (item) {
+                    Navigator.of(context).pop();
+                    richTextController.headerStyleTypeApply.value = item;
+                  },
+                ),
               );
             },
           );
@@ -278,12 +277,15 @@ class RichTextOptionBottomSheet extends StatelessWidget {
                         backgroundColor: Colors.white,
                         context: context,
                         builder: (_) {
-                          return ColorPickerKeyboard(
+                          return OptionBottomSheet(
                             title: titleForegroundBottomSheet,
-                            onSelected: (color) {
-                              richTextController.selectTextColor(color);
-                              Navigator.of(context).pop();
-                            },
+                            padding: const EdgeInsets.all(0),
+                            child: ColorPickerKeyboard(
+                              onSelected: (color) {
+                                richTextController.selectTextColor(color);
+                                Navigator.of(context).pop();
+                              },
+                            ),
                           );
                         });
                   },
@@ -311,12 +313,15 @@ class RichTextOptionBottomSheet extends StatelessWidget {
                         backgroundColor: Colors.white,
                         context: context,
                         builder: (_) {
-                          return ColorPickerKeyboard(
+                          return OptionBottomSheet(
+                            padding: const EdgeInsets.all(0),
                             title: titleBackgroundBottomSheet,
-                            onSelected: (color) {
-                              richTextController.selectBackgroundColor(color);
-                              Navigator.of(context).pop();
-                            },
+                            child: ColorPickerKeyboard(
+                              onSelected: (color) {
+                                richTextController.selectBackgroundColor(color);
+                                Navigator.of(context).pop();
+                              },
+                            ),
                           );
                         });
                   },
