@@ -65,6 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: KeyboardRichText(
         richTextController: richTextController,
         keyBroadToolbar: RichTextKeyboardToolBar(
+          titleBack: 'Format',
           backgroundKeyboardToolBarColor: Colors.grey,
           titleFormatBottomSheet: 'Format',
           richTextController: richTextController,
@@ -77,7 +78,9 @@ class _MyHomePageState extends State<MyHomePage> {
             key: const Key('composer_editor'),
             minHeight: 550,
             addDefaultSelectionMenuItems: false,
-            onCreated: richTextController.onCreateHTMLEditor,
+            onCreated: (editorApi) {
+              richTextController.onCreateHTMLEditor(editorApi, context: context);
+            },
           ),
         ),
       ),

@@ -12,7 +12,7 @@ class ColorPickerKeyboard extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenWidth = MediaQuery.of(context).size.width > 320 ? 320 : MediaQuery.of(context).size.width;
     final double itemWidth = screenWidth / 12;
     const double itemHeight = _kKeyboardHeight / 10;
     final List<Color> listColor = List.empty(growable: true);

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:rich_text_composer/richtext_controller.dart';
 import 'package:rich_text_composer/views/commons/image_paths.dart';
+import 'package:rich_text_composer/views/widgets/list_color.dart';
 import 'package:rich_text_composer/views/widgets/mobile/rich_text_option.dart';
 import 'package:rich_text_composer/views/widgets/tablet/option_container_for_tablet.dart';
 
@@ -15,6 +16,7 @@ class RichTextKeyboardToolBar extends StatelessWidget {
   final VoidCallback? insertAttachment;
   final ImagePaths _imagePaths = ImagePaths();
   final String titleFormatBottomSheet;
+  final String titleBack;
   final String titleQuickStyleBottomSheet;
   final String titleForegroundBottomSheet;
   final String titleBackgroundBottomSheet;
@@ -34,6 +36,7 @@ class RichTextKeyboardToolBar extends StatelessWidget {
     required this.titleForegroundBottomSheet,
     required this.titleBackgroundBottomSheet,
     required this.titleQuickStyleBottomSheet,
+    required this.titleBack,
   });
 
   @override
@@ -115,16 +118,50 @@ class RichTextKeyboardToolBar extends StatelessWidget {
         return Container(
           transform: Matrix4.translationValues(
               richTextController.dxRichTextButtonPosition.value - 34, 0.0, 0.0),
-          child: OptionContainerForTablet(
-            title: titleFormatBottomSheet,
-            child: RichTextOption(
-              richTextController: richTextController,
-              htmlEditorApi: richTextController.htmlEditorApi,
-              titleQuickStyleBottomSheet: titleQuickStyleBottomSheet,
-              titleForegroundBottomSheet: titleForegroundBottomSheet,
-              titleBackgroundBottomSheet: titleBackgroundBottomSheet,
-            ),
-          ),
+          child: ValueListenableBuilder(
+              valueListenable:
+                  richTextController.currentIndexStackOverlayRichTextForTablet,
+              builder: (context, value, _) {
+                return IndexedStack(
+                  index: richTextController
+                      .currentIndexStackOverlayRichTextForTablet.value,
+                  children: [
+                    OptionContainerForTablet(
+                      richTextController: richTextController,
+                      title: titleFormatBottomSheet,
+                      child: RichTextOption(
+                        richTextController: richTextController,
+                        htmlEditorApi: richTextController.htmlEditorApi,
+                        titleQuickStyleBottomSheet: titleQuickStyleBottomSheet,
+                        titleForegroundBottomSheet: titleForegroundBottomSheet,
+                        titleBackgroundBottomSheet: titleBackgroundBottomSheet,
+                      ),
+                    ),
+                    OptionContainerForTablet(
+                      padding: EdgeInsets.zero,
+                      richTextController: richTextController,
+                      titleBack: titleBack,
+                      title: titleForegroundBottomSheet,
+                      child: ColorPickerKeyboard(
+                        onSelected: (color) {
+                          richTextController.selectTextColor(color, context);
+                        },
+                      ),
+                    ),
+                    OptionContainerForTablet(
+                      padding: EdgeInsets.zero,
+                      richTextController: richTextController,
+                      titleBack: titleBack,
+                      title: titleBackgroundBottomSheet,
+                      child: ColorPickerKeyboard(
+                        onSelected: (color) {
+                          richTextController.selectBackgroundColor(color, context);
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              }),
         );
       },
     );

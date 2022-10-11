@@ -110,12 +110,18 @@ class RichTextController {
     }
   }
 
-  void selectTextColor(ui.Color color) {
+  void selectTextColor(ui.Color color, BuildContext context) {
     selectedTextColor.value = color;
+    if (!responsiveUtils.isMobile(context)) {
+      applyTextColor();
+    }
   }
 
-  void selectBackgroundColor(ui.Color color) {
+  void selectBackgroundColor(ui.Color color, BuildContext context) {
     selectedTextBackgroundColor.value = color;
+    if (!responsiveUtils.isMobile(context)) {
+      applyBackgroundTextColor();
+    }
   }
 
   void selectParagraphType(ParagraphType paragraphType, BuildContext context) {
@@ -292,16 +298,18 @@ class RichTextController {
     richTextStreamController.sink.add(false);
   }
 
-  Future<void> editorOnFocus(VoidCallback? onFocus) async {
-    await Future.wait([
-      applyParagraphType(),
-      applyOrderListType(),
-      applyDentType(),
-      applyHeaderStyle(),
-      applySpecialRichText(),
-      applyTextColor(),
-      applyBackgroundTextColor(),
-    ]);
+  Future<void> editorOnFocus(VoidCallback? onFocus, BuildContext context) async {
+    if(responsiveUtils.isMobile(context)) {
+      await Future.wait([
+        applyParagraphType(),
+        applyOrderListType(),
+        applyDentType(),
+        applyHeaderStyle(),
+        applySpecialRichText(),
+        applyTextColor(),
+        applyBackgroundTextColor(),
+      ]);
+    }
     onFocus?.call();
     showRichTextView();
   }
@@ -310,10 +318,11 @@ class RichTextController {
     HtmlEditorApi editorApi, {
     VoidCallback? onFocus,
     VoidCallback? onEnterKeyDown,
+    required BuildContext context,
   }) {
     htmlEditorApi = editorApi;
     editorApi.onFocus = () {
-      editorOnFocus.call(onFocus);
+      editorOnFocus.call(onFocus, context);
     };
 
     editorApi.onKeyDown = () {

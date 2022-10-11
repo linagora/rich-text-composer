@@ -22,7 +22,10 @@ class KeyboardRichText extends StatelessWidget {
       return Stack(children: <Widget>[
         SizedBox(
           height: double.infinity,
-          child: child,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 64),
+            child: child,
+          ),
         ),
         Positioned(
           bottom: MediaQuery.of(context).viewInsets.bottom,
