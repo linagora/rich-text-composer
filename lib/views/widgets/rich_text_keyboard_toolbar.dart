@@ -62,7 +62,6 @@ class RichTextKeyboardToolBar extends StatelessWidget {
               children: [
                 if (insertAttachment != null)
                   _buildIcon(
-                    iconPadding: EdgeInsets.zero,
                     icon: SvgPicture.asset(
                       _imagePaths.icAttachmentsComposer,
                       color: Colors.black,
@@ -73,7 +72,6 @@ class RichTextKeyboardToolBar extends StatelessWidget {
                   ),
                 if (insertImage != null)
                   _buildIcon(
-                    iconPadding: EdgeInsets.zero,
                     icon: SvgPicture.asset(
                       _imagePaths.icInsertImage,
                       fit: BoxFit.fill,
@@ -82,7 +80,6 @@ class RichTextKeyboardToolBar extends StatelessWidget {
                     onTap: () => insertImage?.call(),
                   ),
                 _buildIcon(
-                  iconPadding: EdgeInsets.zero,
                   icon: SvgPicture.asset(
                     _imagePaths.icRichText,
                     color: Colors.black,
@@ -112,41 +109,46 @@ class RichTextKeyboardToolBar extends StatelessWidget {
   }
 
   Widget _buildRichTechOptionTabletView() {
-    return OptionContainerForTablet(
-      title: titleFormatBottomSheet,
-      child: RichTextOption(
-        richTextController: richTextController,
-        htmlEditorApi: richTextController.htmlEditorApi,
-        titleQuickStyleBottomSheet: titleQuickStyleBottomSheet,
-        titleForegroundBottomSheet: titleForegroundBottomSheet,
-        titleBackgroundBottomSheet: titleBackgroundBottomSheet,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: richTextController.dxRichTextButtonPosition,
+      builder: (context, value, _) {
+        return Container(
+          transform: Matrix4.translationValues(
+              richTextController.dxRichTextButtonPosition.value - 34, 0.0, 0.0),
+          child: OptionContainerForTablet(
+            title: titleFormatBottomSheet,
+            child: RichTextOption(
+              richTextController: richTextController,
+              htmlEditorApi: richTextController.htmlEditorApi,
+              titleQuickStyleBottomSheet: titleQuickStyleBottomSheet,
+              titleForegroundBottomSheet: titleForegroundBottomSheet,
+              titleBackgroundBottomSheet: titleBackgroundBottomSheet,
+            ),
+          ),
+        );
+      },
     );
   }
 
   Widget _buildIcon({
     required Widget icon,
     OnTabCallback? onTap,
-    EdgeInsets? iconPadding,
-    double? iconSize,
-    double? splashRadius,
-    double? minSize,
-    Color? colorSelected,
-    Color? colorFocus,
-    ShapeBorder? shapeBorder,
   }) {
-    return Material(
-        color: colorSelected ?? Colors.transparent,
-        shape: shapeBorder ?? const CircleBorder(),
-        child: IconButton(
-            icon: icon,
-            focusColor: colorFocus,
-            iconSize: iconSize,
-            constraints: minSize != null
-                ? BoxConstraints(minWidth: minSize, minHeight: minSize)
-                : null,
-            padding: iconPadding ?? const EdgeInsets.all(8.0),
-            splashRadius: splashRadius ?? 15,
-            onPressed: onTap));
+    return Padding(
+      padding: const EdgeInsets.only(left: 30),
+      child: InkWell(
+        onTap: onTap,
+        onTapDown: (details) {
+          final double position = details.globalPosition.dx / 30;
+          richTextController.dxRichTextButtonPosition.value =
+              position.floor() * 30 + 5;
+        },
+        child: SizedBox(
+          width: 30,
+          height: 30,
+          child: icon,
+        ),
+      ),
+    );
   }
 }

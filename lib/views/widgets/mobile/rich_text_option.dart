@@ -122,7 +122,8 @@ class RichTextOption extends StatelessWidget {
                 richTextController
                     .isTextStyleTypeSelected(SpecialStyleType.bold),
                 () {
-                  richTextController.selectTextStyleType(SpecialStyleType.bold);
+                  richTextController.selectTextStyleType(
+                      SpecialStyleType.bold, context);
                 },
                 _imagePaths.icBoldStyle,
               ),
@@ -131,8 +132,8 @@ class RichTextOption extends StatelessWidget {
                 richTextController
                     .isTextStyleTypeSelected(SpecialStyleType.italic),
                 () {
-                  richTextController
-                      .selectTextStyleType(SpecialStyleType.italic);
+                  richTextController.selectTextStyleType(
+                      SpecialStyleType.italic, context);
                 },
                 _imagePaths.icItalicStyle,
               ),
@@ -141,8 +142,8 @@ class RichTextOption extends StatelessWidget {
                 richTextController
                     .isTextStyleTypeSelected(SpecialStyleType.strikeThrough),
                 () {
-                  richTextController
-                      .selectTextStyleType(SpecialStyleType.strikeThrough);
+                  richTextController.selectTextStyleType(
+                      SpecialStyleType.strikeThrough, context);
                 },
                 _imagePaths.icStrikeThrough,
               ),
@@ -151,8 +152,8 @@ class RichTextOption extends StatelessWidget {
                 richTextController
                     .isTextStyleTypeSelected(SpecialStyleType.underline),
                 () {
-                  richTextController
-                      .selectTextStyleType(SpecialStyleType.underline);
+                  richTextController.selectTextStyleType(
+                      SpecialStyleType.underline, context);
                 },
                 _imagePaths.icUnderLine,
               ),
@@ -167,42 +168,57 @@ class RichTextOption extends StatelessWidget {
     return _buildBorderContainer(
       InkWell(
         onTap: () {
-          showModalBottomSheet(
-            isScrollControlled:
-                richTextController.responsiveUtils.isLandscapeMobile(context),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            backgroundColor: Colors.white,
-            context: context,
-            builder: (_) {
-              return OptionBottomSheet(
-                title: titleQuickStyleBottomSheet,
-                child: ListHeaderStyle(
-                  itemSelected: (item) {
-                    Navigator.of(context).pop();
-                    richTextController.headerStyleTypeApply.value = item;
-                  },
-                ),
-              );
-            },
-          );
+          if (richTextController.responsiveUtils.isMobile(context)) {
+            showModalBottomSheet(
+              isScrollControlled:
+                  richTextController.responsiveUtils.isLandscapeMobile(context),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              backgroundColor: Colors.white,
+              context: context,
+              builder: (_) {
+                return OptionBottomSheet(
+                  title: titleQuickStyleBottomSheet,
+                  child: ListHeaderStyle(
+                    itemSelected: (item) {
+                      Navigator.of(context).pop();
+                      richTextController.headerStyleTypeApply.value = item;
+                    },
+                  ),
+                );
+              },
+            );
+          } else {
+            richTextController.showDialogSelectHeaderStyle(
+              context,
+              titleQuickStyleBottomSheet,
+            );
+          }
         },
         child: Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              titleQuickStyleBottomSheet,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: CommonColor.colorIconSelect,
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
+            ValueListenableBuilder(
+                valueListenable: richTextController.headerStyleTypeApply,
+                builder: (context, value, _) {
+                  return Text(
+                    richTextController.headerStyleTypeApply.value ==
+                            HeaderStyleType.normal
+                        ? titleQuickStyleBottomSheet
+                        : richTextController
+                            .headerStyleTypeApply.value.styleName,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: CommonColor.colorIconSelect,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  );
+                }),
             LimitedBox(
               maxWidth: 28,
               maxHeight: 28,
@@ -229,22 +245,22 @@ class RichTextOption extends StatelessWidget {
             _buildIconButton(
                 richTextController.paragraphTypeApply.value ==
                     ParagraphType.alignLeft, () {
-              richTextController.paragraphTypeApply.value =
-                  ParagraphType.alignLeft;
+              richTextController.selectParagraphType(
+                  ParagraphType.alignLeft, context);
             }, _imagePaths.icAlignLeft),
             _buildVerticalDivider(),
             _buildIconButton(
                 richTextController.paragraphTypeApply.value ==
                     ParagraphType.alignCenter, () {
-              richTextController.paragraphTypeApply.value =
-                  ParagraphType.alignCenter;
+              richTextController.selectParagraphType(
+                  ParagraphType.alignCenter, context);
             }, _imagePaths.icAlignCenter),
             _buildVerticalDivider(),
             _buildIconButton(
                 richTextController.paragraphTypeApply.value ==
                     ParagraphType.alignRight, () {
-              richTextController.paragraphTypeApply.value =
-                  ParagraphType.alignRight;
+              richTextController.selectParagraphType(
+                  ParagraphType.alignRight, context);
             }, _imagePaths.icAlignRight),
           ],
         );
@@ -346,13 +362,14 @@ class RichTextOption extends StatelessWidget {
               _buildIconButton(
                   richTextController.dentTypeApply.value == DentType.indent,
                   () {
-                richTextController.dentTypeApply.value = DentType.indent;
+                richTextController.selectDentTypeType(DentType.indent, context);
               }, _imagePaths.icIndentFormat),
               _buildVerticalDivider(),
               _buildIconButton(
                   richTextController.dentTypeApply.value == DentType.outdent,
                   () {
-                richTextController.dentTypeApply.value = DentType.outdent;
+                richTextController.selectDentTypeType(
+                    DentType.outdent, context);
               }, _imagePaths.icOutDentFormat),
             ],
           );
@@ -370,15 +387,15 @@ class RichTextOption extends StatelessWidget {
               _buildIconButton(
                   richTextController.orderListTypeApply.value ==
                       OrderListType.bulletedList, () {
-                richTextController
-                    .selectOrderListType(OrderListType.bulletedList);
+                richTextController.selectOrderListType(
+                    OrderListType.bulletedList, context);
               }, _imagePaths.icBulletOrder),
               _buildVerticalDivider(),
               _buildIconButton(
                   richTextController.orderListTypeApply.value ==
                       OrderListType.numberedList, () {
-                richTextController
-                    .selectOrderListType(OrderListType.numberedList);
+                richTextController.selectOrderListType(
+                    OrderListType.numberedList, context);
               }, _imagePaths.icNumberOrder),
             ],
           );

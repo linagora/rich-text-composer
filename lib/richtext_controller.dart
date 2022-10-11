@@ -4,6 +4,7 @@ import 'package:enough_html_editor/enough_html_editor.dart';
 import 'package:flutter/material.dart' as ui;
 import 'package:flutter/material.dart';
 import 'package:rich_text_composer/views/commons/utils/responsive_utils.dart';
+import 'package:rich_text_composer/views/widgets/list_header_style.dart';
 import 'package:rich_text_composer/views/widgets/mobile/option_bottom_sheet.dart';
 import 'package:rich_text_composer/views/widgets/mobile/rich_text_option.dart';
 
@@ -15,14 +16,21 @@ class RichTextController {
   HtmlEditorApi? htmlEditorApi;
 
   final listSpecialTextStyleApply = ValueNotifier<Set<SpecialStyleType>>({});
-  final paragraphTypeApply = ValueNotifier<ParagraphType>(ParagraphType.alignLeft);
+  final paragraphTypeApply =
+      ValueNotifier<ParagraphType>(ParagraphType.alignLeft);
   final dentTypeApply = ValueNotifier<DentType?>(null);
   final orderListTypeApply = ValueNotifier<OrderListType?>(null);
   final applyRichTextOptionForTablet = ValueNotifier<bool>(false);
   final selectedTextColor = ValueNotifier<ui.Color>(ui.Colors.black);
   final selectedTextBackgroundColor = ValueNotifier<ui.Color>(ui.Colors.white);
-  final headerStyleTypeApply = ValueNotifier<HeaderStyleType>(HeaderStyleType.normal);
-  final StreamController<bool> richTextStreamController = StreamController<bool>.broadcast();
+  final headerStyleTypeApply =
+      ValueNotifier<HeaderStyleType>(HeaderStyleType.normal);
+  final dxRichTextButtonPosition = ValueNotifier<int>(35);
+  final currentIndexStackOverlayRichTextForTablet = ValueNotifier<int>(0);
+
+
+  final StreamController<bool> richTextStreamController =
+      StreamController<bool>.broadcast();
 
   final ResponsiveUtils responsiveUtils = ResponsiveUtils();
 
@@ -40,43 +48,65 @@ class RichTextController {
     htmlEditorApi?.onFormatSettingsChanged = (formatSettings) {
       if (formatSettings.isBold) {
         isBoldStyleAppended = true;
-        listSpecialTextStyleApply.value = Set.from(listSpecialTextStyleApply.value)..add(SpecialStyleType.bold);
+        listSpecialTextStyleApply.value =
+            Set.from(listSpecialTextStyleApply.value)
+              ..add(SpecialStyleType.bold);
       } else {
-        listSpecialTextStyleApply.value = Set.from(listSpecialTextStyleApply.value)..remove(SpecialStyleType.bold);
+        listSpecialTextStyleApply.value =
+            Set.from(listSpecialTextStyleApply.value)
+              ..remove(SpecialStyleType.bold);
         isBoldStyleAppended = false;
       }
 
       if (formatSettings.isItalic) {
         isItalicStyleAppended = true;
-        listSpecialTextStyleApply.value = Set.from(listSpecialTextStyleApply.value)..add(SpecialStyleType.italic);
+        listSpecialTextStyleApply.value =
+            Set.from(listSpecialTextStyleApply.value)
+              ..add(SpecialStyleType.italic);
       } else {
         isItalicStyleAppended = false;
-        listSpecialTextStyleApply.value = Set.from(listSpecialTextStyleApply.value)..remove(SpecialStyleType.italic);
+        listSpecialTextStyleApply.value =
+            Set.from(listSpecialTextStyleApply.value)
+              ..remove(SpecialStyleType.italic);
       }
 
       if (formatSettings.isUnderline) {
         isUnderlineAppended = true;
-        listSpecialTextStyleApply.value = Set.from(listSpecialTextStyleApply.value)..add(SpecialStyleType.underline);
+        listSpecialTextStyleApply.value =
+            Set.from(listSpecialTextStyleApply.value)
+              ..add(SpecialStyleType.underline);
       } else {
-        listSpecialTextStyleApply.value = Set.from(listSpecialTextStyleApply.value)..remove(SpecialStyleType.underline);
+        listSpecialTextStyleApply.value =
+            Set.from(listSpecialTextStyleApply.value)
+              ..remove(SpecialStyleType.underline);
         isUnderlineAppended = false;
       }
 
       if (formatSettings.isStrikeThrough) {
         isStrikeThroughAppended = true;
-        listSpecialTextStyleApply.value = Set.from(listSpecialTextStyleApply.value)..add(SpecialStyleType.strikeThrough);
+        listSpecialTextStyleApply.value =
+            Set.from(listSpecialTextStyleApply.value)
+              ..add(SpecialStyleType.strikeThrough);
       } else {
-        listSpecialTextStyleApply.value = Set.from(listSpecialTextStyleApply.value)..remove(SpecialStyleType.strikeThrough);
+        listSpecialTextStyleApply.value =
+            Set.from(listSpecialTextStyleApply.value)
+              ..remove(SpecialStyleType.strikeThrough);
         isStrikeThroughAppended = false;
       }
     };
   }
 
-  void selectTextStyleType(SpecialStyleType richTextStyleType) {
+  void selectTextStyleType(
+      SpecialStyleType richTextStyleType, BuildContext context) {
     if (listSpecialTextStyleApply.value.contains(richTextStyleType)) {
-      listSpecialTextStyleApply.value = Set.from(listSpecialTextStyleApply.value)..remove(richTextStyleType);
+      listSpecialTextStyleApply.value =
+          Set.from(listSpecialTextStyleApply.value)..remove(richTextStyleType);
     } else {
-      listSpecialTextStyleApply.value = Set.from(listSpecialTextStyleApply.value)..add(richTextStyleType);
+      listSpecialTextStyleApply.value =
+          Set.from(listSpecialTextStyleApply.value)..add(richTextStyleType);
+    }
+    if (!responsiveUtils.isMobile(context)) {
+      applySpecialRichText();
     }
   }
 
@@ -88,29 +118,64 @@ class RichTextController {
     selectedTextBackgroundColor.value = color;
   }
 
+  void selectParagraphType(ParagraphType paragraphType, BuildContext context) {
+    paragraphTypeApply.value = paragraphType;
+    if (!responsiveUtils.isMobile(context)) {
+      applyParagraphType();
+    }
+  }
+
+  void selectDentTypeType(DentType dentType, BuildContext context) {
+    dentTypeApply.value = dentType;
+    if (!responsiveUtils.isMobile(context)) {
+      applyDentType();
+    }
+  }
+
+  void selectOrderListType(OrderListType orderListType, BuildContext context) {
+    if (orderListTypeApply.value == orderListType) {
+      orderListTypeApply.value = null;
+    } else {
+      orderListTypeApply.value = orderListType;
+    }
+
+    if (!responsiveUtils.isMobile(context)) {
+      applyOrderListType();
+    }
+  }
+
   bool isTextStyleTypeSelected(SpecialStyleType richTextStyleType) {
     return listSpecialTextStyleApply.value.contains(richTextStyleType);
   }
 
-  Future<void> appendSpecialRichText() async {
-    if (isTextStyleTypeSelected(SpecialStyleType.bold) != isBoldStyleAppended) {
-      await htmlEditorApi?.formatBold();
-    }
+  void showDialogSelectHeaderStyle(
+    BuildContext context,
+    String titleQuickStyleBottomSheet,
+  ) {
+    AlertDialog dialog = AlertDialog(
+      contentPadding: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      content: SizedBox(
+        width: 448,
+        height: 436,
+        child: OptionBottomSheet(
+          title: titleQuickStyleBottomSheet,
+          child: ListHeaderStyle(
+            itemSelected: (item) {
+              Navigator.of(context).pop();
+              headerStyleTypeApply.value = item;
+              applyHeaderStyle();
+            },
+          ),
+        ),
+      ),
+    );
 
-    if (isTextStyleTypeSelected(SpecialStyleType.italic) !=
-        isItalicStyleAppended) {
-      await htmlEditorApi?.formatItalic();
-    }
-
-    if (isTextStyleTypeSelected(SpecialStyleType.underline) !=
-        isUnderlineAppended) {
-      await htmlEditorApi?.formatUnderline();
-    }
-
-    if (isTextStyleTypeSelected(SpecialStyleType.strikeThrough) !=
-        isStrikeThroughAppended) {
-      await htmlEditorApi?.formatStrikeThrough();
-    }
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return dialog;
+        });
   }
 
   void showRichTextBottomSheet({
@@ -137,6 +202,27 @@ class RichTextController {
         ),
       ),
     );
+  }
+
+  Future<void> applySpecialRichText() async {
+    if (isTextStyleTypeSelected(SpecialStyleType.bold) != isBoldStyleAppended) {
+      await htmlEditorApi?.formatBold();
+    }
+
+    if (isTextStyleTypeSelected(SpecialStyleType.italic) !=
+        isItalicStyleAppended) {
+      await htmlEditorApi?.formatItalic();
+    }
+
+    if (isTextStyleTypeSelected(SpecialStyleType.underline) !=
+        isUnderlineAppended) {
+      await htmlEditorApi?.formatUnderline();
+    }
+
+    if (isTextStyleTypeSelected(SpecialStyleType.strikeThrough) !=
+        isStrikeThroughAppended) {
+      await htmlEditorApi?.formatStrikeThrough();
+    }
   }
 
   Future<void> applyHeaderStyle() async {
@@ -183,14 +269,6 @@ class RichTextController {
     htmlEditorApi?.setColorTextBackground(selectedTextBackgroundColor.value);
   }
 
-  void selectOrderListType(OrderListType orderListType) {
-    if (orderListTypeApply.value == orderListType) {
-      orderListTypeApply.value = null;
-    } else {
-      orderListTypeApply.value = orderListType;
-    }
-  }
-
   Future<void> applyOrderListType() async {
     switch (orderListTypeApply.value) {
       case OrderListType.bulletedList:
@@ -220,7 +298,7 @@ class RichTextController {
       applyOrderListType(),
       applyDentType(),
       applyHeaderStyle(),
-      appendSpecialRichText(),
+      applySpecialRichText(),
       applyTextColor(),
       applyBackgroundTextColor(),
     ]);
@@ -259,5 +337,6 @@ class RichTextController {
     selectedTextColor.dispose();
     selectedTextBackgroundColor.dispose();
     headerStyleTypeApply.dispose();
+    dxRichTextButtonPosition.dispose();
   }
 }
