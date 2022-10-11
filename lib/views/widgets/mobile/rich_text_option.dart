@@ -280,30 +280,34 @@ class RichTextOption extends StatelessWidget {
                 return _buildIconButton(
                   true,
                   () {
-                    showModalBottomSheet(
-                        isScrollControlled: richTextController.responsiveUtils
-                            .isLandscapeMobile(context),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        constraints: const BoxConstraints(
-                          maxHeight: 300,
-                          maxWidth: 700,
-                        ),
-                        backgroundColor: Colors.white,
-                        context: context,
-                        builder: (_) {
-                          return OptionBottomSheet(
-                            title: titleForegroundBottomSheet,
-                            padding: const EdgeInsets.all(0),
-                            child: ColorPickerKeyboard(
-                              onSelected: (color) {
-                                richTextController.selectTextColor(color);
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          );
-                        });
+                    if(richTextController.responsiveUtils.isMobile(context)) {
+                      showModalBottomSheet(
+                          isScrollControlled: richTextController.responsiveUtils
+                              .isLandscapeMobile(context),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          constraints: const BoxConstraints(
+                            maxHeight: 300,
+                            maxWidth: 700,
+                          ),
+                          backgroundColor: Colors.white,
+                          context: context,
+                          builder: (_) {
+                            return OptionBottomSheet(
+                              title: titleForegroundBottomSheet,
+                              padding: const EdgeInsets.all(0),
+                              child: ColorPickerKeyboard(
+                                onSelected: (color) {
+                                  richTextController.selectTextColor(color, context);
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            );
+                          });
+                    } else {
+                      richTextController.currentIndexStackOverlayRichTextForTablet.value = 1;
+                    }
                   },
                   _imagePaths.icTextColor,
                   iconColor: richTextController.selectedTextColor.value,
@@ -316,30 +320,34 @@ class RichTextOption extends StatelessWidget {
                 return _buildIconButton(
                   true,
                   () {
-                    showModalBottomSheet(
-                        isScrollControlled: richTextController.responsiveUtils
-                            .isLandscapeMobile(context),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        constraints: const BoxConstraints(
-                          maxHeight: 300,
-                          maxWidth: 700,
-                        ),
-                        backgroundColor: Colors.white,
-                        context: context,
-                        builder: (_) {
-                          return OptionBottomSheet(
-                            padding: const EdgeInsets.all(0),
-                            title: titleBackgroundBottomSheet,
-                            child: ColorPickerKeyboard(
-                              onSelected: (color) {
-                                richTextController.selectBackgroundColor(color);
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          );
-                        });
+                    if(richTextController.responsiveUtils.isMobile(context)) {
+                      showModalBottomSheet(
+                          isScrollControlled: richTextController.responsiveUtils
+                              .isLandscapeMobile(context),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          constraints: const BoxConstraints(
+                            maxHeight: 300,
+                            maxWidth: 700,
+                          ),
+                          backgroundColor: Colors.white,
+                          context: context,
+                          builder: (_) {
+                            return OptionBottomSheet(
+                              padding: const EdgeInsets.all(0),
+                              title: titleBackgroundBottomSheet,
+                              child: ColorPickerKeyboard(
+                                onSelected: (color) {
+                                  richTextController.selectBackgroundColor(color, context);
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            );
+                          });
+                    } else {
+                      richTextController.currentIndexStackOverlayRichTextForTablet.value = 2;
+                    }
                   },
                   _imagePaths.icBackgroundColor,
                   iconColor:

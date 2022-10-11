@@ -19,6 +19,7 @@ class ImagePaths {
   String get icOutDentFormat => _getImagePath('ic_outdent_format.svg');
   String get icBulletOrder => _getImagePath('ic_bullet_order.svg');
   String get icNumberOrder => _getImagePath('ic_number_order.svg');
+  String get icBack => _getImagePath('ic_back.svg');
 
   String _getImagePath(String imageName) {
     return AssetsPaths.images + imageName;
