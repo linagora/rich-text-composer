@@ -4,15 +4,19 @@ class ColorPickerKeyboard extends StatelessWidget
     implements PreferredSizeWidget {
   static const double _kKeyboardHeight = 200;
   final Function(Color) onSelected;
+  final Color currentColor;
 
   const ColorPickerKeyboard({
     Key? key,
     required this.onSelected,
+    required this.currentColor,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width > 320 ? 320 : MediaQuery.of(context).size.width;
+    final double screenWidth = MediaQuery.of(context).size.width > 320
+        ? 320
+        : MediaQuery.of(context).size.width;
     final double itemWidth = screenWidth / 12;
     const double itemHeight = _kKeyboardHeight / 10;
     final List<Color> listColor = List.empty(growable: true);
@@ -26,15 +30,23 @@ class ColorPickerKeyboard extends StatelessWidget
             direction: Axis.vertical,
             children: listColor
                 .map((color) => GestureDetector(
-              onTap: () {
-                onSelected.call(color);
-              },
-              child: Container(
-                color: color,
-                width: itemWidth,
-                height: itemHeight,
-              ),
-            ))
+                      onTap: () {
+                        onSelected.call(color);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: color,
+                          border: Border.all(
+                            color: currentColor == color
+                                ? Colors.white
+                                : Colors.transparent,
+                            width: 3,
+                          ),
+                        ),
+                        width: itemWidth,
+                        height: itemHeight,
+                      ),
+                    ))
                 .toList(),
           ),
         ),

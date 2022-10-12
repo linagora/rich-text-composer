@@ -137,28 +137,43 @@ class RichTextKeyboardToolBar extends StatelessWidget {
                         titleBackgroundBottomSheet: titleBackgroundBottomSheet,
                       ),
                     ),
-                    OptionContainerForTablet(
-                      padding: EdgeInsets.zero,
-                      richTextController: richTextController,
-                      titleBack: titleBack,
-                      title: titleForegroundBottomSheet,
-                      child: ColorPickerKeyboard(
-                        onSelected: (color) {
-                          richTextController.selectTextColor(color, context);
-                        },
-                      ),
-                    ),
-                    OptionContainerForTablet(
-                      padding: EdgeInsets.zero,
-                      richTextController: richTextController,
-                      titleBack: titleBack,
-                      title: titleBackgroundBottomSheet,
-                      child: ColorPickerKeyboard(
-                        onSelected: (color) {
-                          richTextController.selectBackgroundColor(color, context);
-                        },
-                      ),
-                    ),
+                    ValueListenableBuilder(
+                        valueListenable: richTextController.selectedTextColor,
+                        builder: (context, _, __) {
+                          return OptionContainerForTablet(
+                            padding: EdgeInsets.zero,
+                            richTextController: richTextController,
+                            titleBack: titleBack,
+                            title: titleForegroundBottomSheet,
+                            child: ColorPickerKeyboard(
+                              currentColor:
+                                  richTextController.selectedTextColor.value,
+                              onSelected: (color) {
+                                richTextController.selectTextColor(
+                                    color, context);
+                              },
+                            ),
+                          );
+                        }),
+                    ValueListenableBuilder(
+                        valueListenable:
+                            richTextController.selectedTextBackgroundColor,
+                        builder: (context, _, __) {
+                          return OptionContainerForTablet(
+                            padding: EdgeInsets.zero,
+                            richTextController: richTextController,
+                            titleBack: titleBack,
+                            title: titleBackgroundBottomSheet,
+                            child: ColorPickerKeyboard(
+                              currentColor: richTextController
+                                  .selectedTextBackgroundColor.value,
+                              onSelected: (color) {
+                                richTextController.selectBackgroundColor(
+                                    color, context);
+                              },
+                            ),
+                          );
+                        })
                   ],
                 );
               }),
