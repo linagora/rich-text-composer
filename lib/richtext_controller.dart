@@ -23,15 +23,11 @@ class RichTextController {
   final applyRichTextOptionForTablet = ValueNotifier<bool>(false);
   final selectedTextColor = ValueNotifier<ui.Color>(ui.Colors.black);
   final selectedTextBackgroundColor = ValueNotifier<ui.Color>(ui.Colors.white);
-  final headerStyleTypeApply =
-      ValueNotifier<HeaderStyleType>(HeaderStyleType.normal);
+  final headerStyleTypeApply = ValueNotifier<HeaderStyleType>(HeaderStyleType.normal);
   final dxRichTextButtonPosition = ValueNotifier<int>(35);
   final currentIndexStackOverlayRichTextForTablet = ValueNotifier<int>(0);
 
-
-  final StreamController<bool> richTextStreamController =
-      StreamController<bool>.broadcast();
-
+  final StreamController<bool> richTextStreamController = StreamController<bool>.broadcast();
   final ResponsiveUtils responsiveUtils = ResponsiveUtils();
 
   bool isBoldStyleAppended = false;
@@ -96,8 +92,7 @@ class RichTextController {
     };
   }
 
-  void selectTextStyleType(
-      SpecialStyleType richTextStyleType, BuildContext context) {
+  void selectTextStyleType(SpecialStyleType richTextStyleType, BuildContext context) {
     if (listSpecialTextStyleApply.value.contains(richTextStyleType)) {
       listSpecialTextStyleApply.value =
           Set.from(listSpecialTextStyleApply.value)..remove(richTextStyleType);
@@ -178,10 +173,11 @@ class RichTextController {
     );
 
     showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return dialog;
-        });
+      context: context,
+      builder: (BuildContext context) {
+        return dialog;
+      },
+    );
   }
 
   void showRichTextBottomSheet({
