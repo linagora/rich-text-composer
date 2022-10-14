@@ -209,21 +209,25 @@ class RichTextController {
   Future<void> applySpecialRichText() async {
     if (isTextStyleTypeSelected(SpecialStyleType.bold) != isBoldStyleAppended) {
       await htmlEditorApi?.formatBold();
+      isBoldStyleAppended = !isBoldStyleAppended;
     }
 
     if (isTextStyleTypeSelected(SpecialStyleType.italic) !=
         isItalicStyleAppended) {
       await htmlEditorApi?.formatItalic();
+      isItalicStyleAppended = !isItalicStyleAppended;
     }
 
     if (isTextStyleTypeSelected(SpecialStyleType.underline) !=
         isUnderlineAppended) {
       await htmlEditorApi?.formatUnderline();
+      isUnderlineAppended = !isUnderlineAppended;
     }
 
     if (isTextStyleTypeSelected(SpecialStyleType.strikeThrough) !=
         isStrikeThroughAppended) {
       await htmlEditorApi?.formatStrikeThrough();
+      isStrikeThroughAppended = !isStrikeThroughAppended;
     }
   }
 
