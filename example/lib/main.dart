@@ -1,7 +1,5 @@
-import 'package:enough_html_editor/enough_html_editor.dart';
 import 'package:flutter/material.dart';
-import 'package:rich_text_composer/richtext_controller.dart';
-import 'package:rich_text_composer/views/keyboard_richtext.dart';
+import 'package:rich_text_composer/rich_text_composer.dart';
 import 'package:rich_text_composer/views/widgets/rich_text_keyboard_toolbar.dart';
 
 void main() {
