@@ -50,43 +50,64 @@ class OptionContainerForTablet extends StatelessWidget {
                       ? MainAxisAlignment.start
                       : MainAxisAlignment.center,
                   children: [
-                    if (titleBack != null)
-                      InkWell(
-                        onTap: () {
-                          richTextController
-                              .currentIndexStackOverlayRichTextForTablet
-                              .value = 0;
-                        },
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SvgPicture.asset(
-                              _imagePaths.icBack,
-                              fit: BoxFit.fill,
-                              width: 24,
-                              height: 24,
-                              package: packageName,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              titleBack!,
-                              style: const TextStyle(
-                                  fontSize: 15, color: CommonColor.colorBlue),
-                            )
-                          ],
+                    titleBack != null
+                        ? InkWell(
+                          onTap: () {
+                            richTextController
+                                .currentIndexStackOverlayRichTextForTablet
+                                .value = 0;
+                          },
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SvgPicture.asset(
+                                _imagePaths.icBack,
+                                fit: BoxFit.fill,
+                                width: 24,
+                                height: 24,
+                                package: packageName,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                titleBack!,
+                                style: const TextStyle(
+                                    fontSize: 15,
+                                    color: CommonColor.colorBlue),
+                              )
+                            ],
+                          ),
+                        )
+                        : const SizedBox(width: 72),
+                    Expanded(
+                      flex: 1,
+                      child: Text(
+                        title,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
-                    if (titleBack != null) const SizedBox(width: 24),
-                    Text(
-                      title,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                      ),
                     ),
+                    Container(
+                      padding: const EdgeInsets.only(left: 48),
+                      width: 72,
+                      child: InkWell(
+                        onTap: () {
+                          richTextController
+                              .applyRichTextOptionForTablet.value = false;
+                        },
+                        child: SvgPicture.asset(
+                          _imagePaths.icDismiss,
+                          fit: BoxFit.fill,
+                          width: 24,
+                          height: 24,
+                          package: packageName,
+                        ),
+                      ),
+                    )
                   ],
                 ),
               ),
