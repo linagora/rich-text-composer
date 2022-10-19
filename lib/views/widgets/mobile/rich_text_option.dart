@@ -114,7 +114,7 @@ class RichTextOption extends StatelessWidget {
     return _buildBorderContainer(
       ValueListenableBuilder(
         valueListenable: richTextController.listSpecialTextStyleApply,
-        builder: (context, value, _) {
+        builder: (context, _, __) {
           return Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -157,8 +157,7 @@ class RichTextOption extends StatelessWidget {
               title: titleQuickStyleBottomSheet,
               child: ListHeaderStyle(
                 itemSelected: (style) {
-                  richTextController.headerStyleTypeApply.value = style;
-                  richTextController.applyHeaderStyle();
+                  richTextController.applyHeaderStyle(style);
                   Navigator.of(context).pop();
                 },
               ),
@@ -171,8 +170,7 @@ class RichTextOption extends StatelessWidget {
                     title: titleQuickStyleBottomSheet,
                     child: ListHeaderStyle(
                       itemSelected: (style) {
-                        richTextController.headerStyleTypeApply.value = style;
-                        richTextController.applyHeaderStyle();
+                        richTextController.applyHeaderStyle(style);
                         Navigator.of(context).pop();
                       },
                     )
@@ -180,27 +178,21 @@ class RichTextOption extends StatelessWidget {
               });
           }
         },
-        customBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+        customBorder: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ValueListenableBuilder(
-                valueListenable: richTextController.headerStyleTypeApply,
-                builder: (context, value, _) {
-                  return Text(
-                    richTextController.headerStyleTypeApply.value == HeaderStyleType.normal
-                        ? titleQuickStyleBottomSheet
-                        : richTextController.headerStyleTypeApply.value.styleName,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: CommonColor.colorIconSelect,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  );
-                }),
+            Text(
+              titleQuickStyleBottomSheet,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: CommonColor.colorIconSelect,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
             LimitedBox(
               maxWidth: 28,
               maxHeight: 28,
@@ -219,7 +211,7 @@ class RichTextOption extends StatelessWidget {
   Widget _buildAlignStyle() {
     return _buildBorderContainer(ValueListenableBuilder(
       valueListenable: richTextController.paragraphTypeApply,
-      builder: (context, value, _) {
+      builder: (context, _, __) {
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -253,7 +245,7 @@ class RichTextOption extends StatelessWidget {
         children: [
           ValueListenableBuilder(
               valueListenable: richTextController.selectedTextColor,
-              builder: (context, value, _) {
+              builder: (context, _, __) {
                 return _buildIconButton(
                   true,
                   () {
@@ -284,7 +276,7 @@ class RichTextOption extends StatelessWidget {
           _buildVerticalDivider(),
           ValueListenableBuilder(
               valueListenable: richTextController.selectedTextBackgroundColor,
-              builder: (context, value, _) {
+              builder: (context, _, __) {
                 return _buildIconButton(
                   true,
                   () {
@@ -320,7 +312,7 @@ class RichTextOption extends StatelessWidget {
   Widget _buildFormatStyle() {
     return _buildBorderContainer(ValueListenableBuilder(
       valueListenable: richTextController.dentTypeApply,
-      builder: (context, value, _) {
+      builder: (context, _, __) {
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -343,7 +335,7 @@ class RichTextOption extends StatelessWidget {
   Widget _buildOrderListStyle() {
     return _buildBorderContainer(ValueListenableBuilder(
       valueListenable: richTextController.orderListTypeApply,
-      builder: (context, value, _) {
+      builder: (context, _, __) {
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

@@ -26,7 +26,7 @@ class ResponsiveUtils {
 
   bool isPortraitMobile(BuildContext context) => isScreenWithShortestSide(context) && isPortrait(context);
 
-  bool isMobileResponsive(BuildContext context) => isPortraitMobile(context) && isLandscapeMobile(context);
+  bool isMobileResponsive(BuildContext context) => isPortraitMobile(context) || isLandscapeMobile(context);
 
   bool isLandscapeTablet(BuildContext context) {
     return MediaQuery.of(context).size.shortestSide >= minTabletWidth &&

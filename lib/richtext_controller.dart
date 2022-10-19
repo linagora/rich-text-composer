@@ -1,10 +1,10 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 
-import 'package:enough_html_editor/enough_html_editor.dart';
-import 'package:flutter/material.dart' as ui;
+import 'package:enough_html_editor/enough_html_editor.dart' as enough_html_editor;
 import 'package:flutter/material.dart';
 import 'package:rich_text_composer/views/commons/utils/responsive_utils.dart';
-import 'package:rich_text_composer/views/widgets/list_header_style.dart';
+import 'package:rich_text_composer/views/widgets/dialog/dialog_utils.dart';
 import 'package:rich_text_composer/views/widgets/mobile/option_bottom_sheet.dart';
 import 'package:rich_text_composer/views/widgets/mobile/rich_text_option.dart';
 
@@ -13,17 +13,15 @@ import 'models/types.dart';
 const double defaultKeyboardToolbarHeight = 48;
 
 class RichTextController {
-  HtmlEditorApi? htmlEditorApi;
+  enough_html_editor.HtmlEditorApi? htmlEditorApi;
 
   final listSpecialTextStyleApply = ValueNotifier<Set<SpecialStyleType>>({});
-  final paragraphTypeApply =
-      ValueNotifier<ParagraphType>(ParagraphType.alignLeft);
+  final paragraphTypeApply = ValueNotifier<ParagraphType>(ParagraphType.alignLeft);
   final dentTypeApply = ValueNotifier<DentType?>(null);
   final orderListTypeApply = ValueNotifier<OrderListType?>(null);
   final applyRichTextOptionForTablet = ValueNotifier<bool>(false);
-  final selectedTextColor = ValueNotifier<ui.Color>(ui.Colors.black);
-  final selectedTextBackgroundColor = ValueNotifier<ui.Color>(ui.Colors.white);
-  final headerStyleTypeApply = ValueNotifier<HeaderStyleType>(HeaderStyleType.normal);
+  final selectedTextColor = ValueNotifier<Color>(Colors.black);
+  final selectedTextBackgroundColor = ValueNotifier<Color>(Colors.white);
   final dxRichTextButtonPosition = ValueNotifier<int>(35);
   final currentIndexStackOverlayRichTextForTablet = ValueNotifier<int>(0);
 
@@ -34,9 +32,6 @@ class RichTextController {
   bool isItalicStyleAppended = false;
   bool isUnderlineAppended = false;
   bool isStrikeThroughAppended = false;
-  int _currentLine = 1;
-
-  int get currentLine => _currentLine;
 
   Stream<bool> get richTextStream => richTextStreamController.stream;
 
@@ -90,6 +85,33 @@ class RichTextController {
         isStrikeThroughAppended = false;
       }
     };
+
+    htmlEditorApi?.onAlignSettingsChanged = (elementAlign) {
+      switch(elementAlign) {
+        case enough_html_editor.ElementAlign.left:
+          paragraphTypeApply.value = ParagraphType.alignLeft;
+          break;
+        case enough_html_editor.ElementAlign.center:
+          paragraphTypeApply.value = ParagraphType.alignCenter;
+          break;
+        case enough_html_editor.ElementAlign.right:
+          paragraphTypeApply.value = ParagraphType.alignRight;
+          break;
+        case enough_html_editor.ElementAlign.justify:
+          paragraphTypeApply.value = ParagraphType.justify;
+          break;
+      }
+    };
+
+    htmlEditorApi?.onColorChanged = (colorSetting) {
+      if (colorSetting.textForeground != null) {
+        selectedTextColor.value = colorSetting.textForeground!;
+      }
+
+      if (colorSetting.textBackground != null) {
+        selectedTextBackgroundColor.value = colorSetting.textBackground!;
+      }
+    };
   }
 
   void selectTextStyleType(SpecialStyleType richTextStyleType, BuildContext context) {
@@ -100,37 +122,46 @@ class RichTextController {
       listSpecialTextStyleApply.value =
           Set.from(listSpecialTextStyleApply.value)..add(richTextStyleType);
     }
-    if (!responsiveUtils.isMobile(context)) {
-      applySpecialRichText();
+
+    if (Platform.isAndroid) {
+      if (!responsiveUtils.isMobileResponsive(context)) {
+        applySpecialRichText(context);
+      }
+    } else {
+      applySpecialRichText(context);
     }
   }
 
-  void selectTextColor(ui.Color color, BuildContext context) {
+  void selectTextColor(Color color, BuildContext context) {
     selectedTextColor.value = color;
-    if (!responsiveUtils.isMobile(context)) {
-      applyTextColor();
+    if (Platform.isAndroid) {
+      if (!responsiveUtils.isMobileResponsive(context)) {
+        applyTextColor(context);
+      }
+    } else {
+      applyTextColor(context);
     }
   }
 
-  void selectBackgroundColor(ui.Color color, BuildContext context) {
+  void selectBackgroundColor(Color color, BuildContext context) {
     selectedTextBackgroundColor.value = color;
-    if (!responsiveUtils.isMobile(context)) {
-      applyBackgroundTextColor();
+    if (Platform.isAndroid) {
+      if (!responsiveUtils.isMobileResponsive(context)) {
+        applyBackgroundTextColor(context);
+      }
+    } else {
+      applyBackgroundTextColor(context);
     }
   }
 
   void selectParagraphType(ParagraphType paragraphType, BuildContext context) {
     paragraphTypeApply.value = paragraphType;
-    if (!responsiveUtils.isMobile(context)) {
-      applyParagraphType();
-    }
+    applyParagraphType();
   }
 
   void selectDentTypeType(DentType dentType, BuildContext context) {
     dentTypeApply.value = dentType;
-    if (!responsiveUtils.isMobile(context)) {
-      applyDentType();
-    }
+    applyDentType();
   }
 
   void selectOrderListType(OrderListType orderListType, BuildContext context) {
@@ -139,100 +170,59 @@ class RichTextController {
     } else {
       orderListTypeApply.value = orderListType;
     }
-
-    if (!responsiveUtils.isMobile(context)) {
-      applyOrderListType();
-    }
+    applyOrderListType();
   }
 
   bool isTextStyleTypeSelected(SpecialStyleType richTextStyleType) {
     return listSpecialTextStyleApply.value.contains(richTextStyleType);
   }
 
-  void showDialogSelectHeaderStyle(
-    BuildContext context,
-    String titleQuickStyleBottomSheet,
-  ) {
-    AlertDialog dialog = AlertDialog(
-      contentPadding: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      content: SizedBox(
-        width: 448,
-        height: 436,
-        child: OptionBottomSheet(
-          title: titleQuickStyleBottomSheet,
-          child: ListHeaderStyle(
-            itemSelected: (item) {
-              Navigator.of(context).pop();
-              headerStyleTypeApply.value = item;
-              applyHeaderStyle();
-            },
-          ),
-        ),
-      ),
-    );
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return dialog;
-      },
-    );
-  }
-
   void showRichTextBottomSheet({
-    required ui.BuildContext context,
+    required BuildContext context,
     required String titleFormatBottomSheet,
     required String titleQuickStyleBottomSheet,
     required String titleForegroundBottomSheet,
     required String titleBackgroundBottomSheet,
-  }) async {
-    await htmlEditorApi?.unfocus();
-    await ui.showModalBottomSheet(
-      context: context,
-      shape: ui.RoundedRectangleBorder(
-        borderRadius: ui.BorderRadius.circular(16),
-      ),
-      backgroundColor: ui.Colors.white,
-      builder: (context) => OptionBottomSheet(
-        title: titleFormatBottomSheet,
-        child: RichTextOption(
-          richTextController: this,
-          titleQuickStyleBottomSheet: titleQuickStyleBottomSheet,
-          titleForegroundBottomSheet: titleForegroundBottomSheet,
-          titleBackgroundBottomSheet: titleBackgroundBottomSheet,
-        ),
-      ),
-    );
+  }) {
+    DialogUtils.showDialogBottomSheet(context, OptionBottomSheet(
+      title: titleFormatBottomSheet,
+      child: RichTextOption(
+        richTextController: this,
+        titleQuickStyleBottomSheet: titleQuickStyleBottomSheet,
+        titleForegroundBottomSheet: titleForegroundBottomSheet,
+        titleBackgroundBottomSheet: titleBackgroundBottomSheet,
+      )
+    ));
   }
 
-  Future<void> applySpecialRichText() async {
+  Future<void> applySpecialRichText(BuildContext context) async {
+    if (Platform.isAndroid && responsiveUtils.isMobileResponsive(context)) {
+      await htmlEditorApi?.restoreSelectionRange();
+    }
+
     if (isTextStyleTypeSelected(SpecialStyleType.bold) != isBoldStyleAppended) {
       await htmlEditorApi?.formatBold();
       isBoldStyleAppended = !isBoldStyleAppended;
     }
 
-    if (isTextStyleTypeSelected(SpecialStyleType.italic) !=
-        isItalicStyleAppended) {
+    if (isTextStyleTypeSelected(SpecialStyleType.italic) != isItalicStyleAppended) {
       await htmlEditorApi?.formatItalic();
       isItalicStyleAppended = !isItalicStyleAppended;
     }
 
-    if (isTextStyleTypeSelected(SpecialStyleType.underline) !=
-        isUnderlineAppended) {
+    if (isTextStyleTypeSelected(SpecialStyleType.underline) != isUnderlineAppended) {
       await htmlEditorApi?.formatUnderline();
       isUnderlineAppended = !isUnderlineAppended;
     }
 
-    if (isTextStyleTypeSelected(SpecialStyleType.strikeThrough) !=
-        isStrikeThroughAppended) {
+    if (isTextStyleTypeSelected(SpecialStyleType.strikeThrough) != isStrikeThroughAppended) {
       await htmlEditorApi?.formatStrikeThrough();
       isStrikeThroughAppended = !isStrikeThroughAppended;
     }
   }
 
-  Future<void> applyHeaderStyle() async {
-    await htmlEditorApi?.formatHeader(headerStyleTypeApply.value.styleValue);
+  void applyHeaderStyle(HeaderStyleType styleType) async {
+    await htmlEditorApi?.formatHeader(styleType.styleValue);
   }
 
   Future<void> applyParagraphType() async {
@@ -267,11 +257,17 @@ class RichTextController {
     }
   }
 
-  Future<void> applyTextColor() async {
+  Future<void> applyTextColor(BuildContext context) async {
+    if (Platform.isAndroid && responsiveUtils.isMobileResponsive(context)) {
+      await htmlEditorApi?.restoreSelectionRange();
+    }
     htmlEditorApi?.setColorTextForeground(selectedTextColor.value);
   }
 
-  Future<void> applyBackgroundTextColor() async {
+  Future<void> applyBackgroundTextColor(BuildContext context) async {
+    if (Platform.isAndroid && responsiveUtils.isMobileResponsive(context)) {
+      await htmlEditorApi?.restoreSelectionRange();
+    }
     htmlEditorApi?.setColorTextBackground(selectedTextBackgroundColor.value);
   }
 
@@ -298,16 +294,12 @@ class RichTextController {
     richTextStreamController.sink.add(false);
   }
 
-  Future<void> editorOnFocus(VoidCallback? onFocus, BuildContext context) async {
-    if(responsiveUtils.isMobile(context)) {
+  void editorOnFocus(VoidCallback? onFocus, BuildContext context) async {
+    if (Platform.isAndroid && responsiveUtils.isMobileResponsive(context)) {
       await Future.wait([
-        applyParagraphType(),
-        applyOrderListType(),
-        applyDentType(),
-        applyHeaderStyle(),
-        applySpecialRichText(),
-        applyTextColor(),
-        applyBackgroundTextColor(),
+        applySpecialRichText(context),
+        applyTextColor(context),
+        applyBackgroundTextColor(context),
       ]);
     }
     onFocus?.call();
@@ -315,7 +307,7 @@ class RichTextController {
   }
 
   void onCreateHTMLEditor(
-    HtmlEditorApi editorApi, {
+    enough_html_editor.HtmlEditorApi editorApi, {
     VoidCallback? onFocus,
     VoidCallback? onEnterKeyDown,
     required BuildContext context,
@@ -327,7 +319,6 @@ class RichTextController {
 
     editorApi.onKeyDown = () {
       onEnterKeyDown?.call();
-      _currentLine++;
     };
 
     editorApi.onFocusOut = () {
@@ -345,7 +336,6 @@ class RichTextController {
     orderListTypeApply.dispose();
     selectedTextColor.dispose();
     selectedTextBackgroundColor.dispose();
-    headerStyleTypeApply.dispose();
     dxRichTextButtonPosition.dispose();
   }
 }
