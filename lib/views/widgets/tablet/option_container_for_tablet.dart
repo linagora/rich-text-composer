@@ -11,10 +11,10 @@ class OptionContainerForTablet extends StatelessWidget {
     Key? key,
     required this.title,
     required this.child,
+    required this.richTextController,
     this.titleBack,
     this.padding = const EdgeInsets.only(left: 24, right: 24, top: 24, bottom: 35),
     this.maxWidth = 320,
-    required this.richTextController,
   }) : super(key: key);
 
   final String title;

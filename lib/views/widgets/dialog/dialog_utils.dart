@@ -39,7 +39,7 @@ class DialogUtils {
       builder: (BuildContext context) {
         return AlertDialog(
           contentPadding: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
           content: SizedBox(
             width: 448,
             height: 436,

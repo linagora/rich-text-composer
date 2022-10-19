@@ -15,12 +15,12 @@ class ColorPickerKeyboard extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraint) {
       return Container(
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(4),
+        decoration: const BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(4)),
             color: Colors.white
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: const BorderRadius.all(Radius.circular(4)),
           child: Wrap(children: CommonColor.listColorsPicker
               .map((color) => _itemColorWidget(context, constraint.maxWidth, color))
               .toList()),

@@ -44,7 +44,7 @@ class ListHeaderStyle extends StatelessWidget {
       case HeaderStyleType.code:
         return Container(
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: const BorderRadius.all(Radius.circular(4)),
                 border: Border.all(
                     color: CommonColor.colorBorderStyleCode,
                     width: 1.0),

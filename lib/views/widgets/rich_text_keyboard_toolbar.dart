@@ -34,6 +34,7 @@ class RichTextKeyboardToolBar extends StatelessWidget {
 
   RichTextKeyboardToolBar({
     super.key,
+    required this.richTextController,
     this.insertImage,
     this.insertAttachment,
     this.isLandScapeMode,
@@ -41,7 +42,6 @@ class RichTextKeyboardToolBar extends StatelessWidget {
     this.heightToolBar = defaultKeyboardToolbarHeight,
     this.paddingToolbar,
     this.paddingIcon,
-    required this.richTextController,
     this.titleFormatBottomSheet = 'Format',
     this.titleForegroundBottomSheet = 'Foreground',
     this.titleBackgroundBottomSheet = 'Background',
@@ -57,7 +57,7 @@ class RichTextKeyboardToolBar extends StatelessWidget {
       children: [
         ValueListenableBuilder(
             valueListenable: richTextController.applyRichTextOptionForTablet,
-            builder: (context, value, _) {
+            builder: (context, _, __) {
               return Visibility(
                 visible: richTextController.applyRichTextOptionForTablet.value,
                 child: _buildRichTechOptionTabletView(),
@@ -104,10 +104,10 @@ class RichTextKeyboardToolBar extends StatelessWidget {
                   padding: paddingIcon,
                   onTap: () async {
                     if (_responsiveUtils.isMobileResponsive(context)) {
-                      await richTextController.htmlEditorApi?.unfocus();
-
                       if (Platform.isAndroid) {
                         await richTextController.htmlEditorApi?.storeSelectionRange();
+                      } else {
+                        await richTextController.htmlEditorApi?.unfocus();
                       }
 
                       richTextController.showRichTextBottomSheet(
@@ -132,7 +132,7 @@ class RichTextKeyboardToolBar extends StatelessWidget {
   Widget _buildRichTechOptionTabletView() {
     return ValueListenableBuilder(
       valueListenable: richTextController.dxRichTextButtonPosition,
-      builder: (context, value, _) {
+      builder: (context, _, __) {
         return Container(
           transform: Matrix4.translationValues(
               richTextController.dxRichTextButtonPosition.value.toDouble() - 35.0,
@@ -158,7 +158,7 @@ class RichTextKeyboardToolBar extends StatelessWidget {
                       if (value == 1)
                         ValueListenableBuilder(
                             valueListenable: richTextController.selectedTextColor,
-                            builder: (context, value, __) {
+                            builder: (context, _, __) {
                               return OptionContainerForTablet(
                                 richTextController: richTextController,
                                 titleBack: titleBack,
