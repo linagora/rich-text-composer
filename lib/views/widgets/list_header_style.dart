@@ -14,12 +14,11 @@ class ListHeaderStyle extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: HeaderStyleType.values.length,
+      shrinkWrap: true,
       itemBuilder: (context, index) {
         final item = HeaderStyleType.values[index];
         return InkWell(
-            onTap: () {
-              itemSelected.call(item);
-            },
+            onTap: () => itemSelected.call(item),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 4),
               child: _buildItemDropdown(item),
@@ -35,22 +34,30 @@ class ListHeaderStyle extends StatelessWidget {
             decoration: const BoxDecoration(
                 border: Border(
                     left: BorderSide(
-                        color: CommonColor.colorStyleBlockQuote, width: 5.0))),
+                        color: CommonColor.colorStyleBlockQuote,
+                        width: 5.0))),
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: _buildHeaderStyle(headerStyle.styleName,
-                headerStyle.textSize, headerStyle.fontWeight));
+            child: _buildHeaderStyle(
+                headerStyle.styleName,
+                headerStyle.textSize,
+                headerStyle.fontWeight));
       case HeaderStyleType.code:
         return Container(
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(4),
                 border: Border.all(
-                    color: CommonColor.colorBorderStyleCode, width: 1.0),
+                    color: CommonColor.colorBorderStyleCode,
+                    width: 1.0),
                 color: CommonColor.colorBackgroundStyleCode),
             padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8),
-            child: _buildHeaderStyle(headerStyle.styleName,
-                headerStyle.textSize, headerStyle.fontWeight));
+            child: _buildHeaderStyle(
+                headerStyle.styleName,
+                headerStyle.textSize,
+                headerStyle.fontWeight));
       default:
-        return _buildHeaderStyle(headerStyle.styleName, headerStyle.textSize,
+        return _buildHeaderStyle(
+            headerStyle.styleName,
+            headerStyle.textSize,
             headerStyle.fontWeight);
     }
   }
@@ -58,7 +65,9 @@ class ListHeaderStyle extends StatelessWidget {
   Widget _buildHeaderStyle(String name, double size, FontWeight fontWeight) {
     return Text(name,
         style: TextStyle(
-            fontSize: size, fontWeight: fontWeight, color: Colors.black),
+            fontSize: size,
+            fontWeight: fontWeight,
+            color: Colors.black),
         maxLines: 1,
         softWrap: true,
         overflow: TextOverflow.ellipsis);

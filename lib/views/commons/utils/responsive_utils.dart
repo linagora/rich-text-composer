@@ -2,19 +2,9 @@ import 'package:flutter/widgets.dart';
 
 class ResponsiveUtils {
 
-  static const double defaultSizeLeftMenuMobile = 375;
-  static const double defaultSizeDrawer = 320;
-
-  final int heightShortest = 600;
-
   final int minDesktopWidth = 1200;
   final int minTabletWidth = 600;
   final int minTabletLargeWidth = 900;
-
-  final double defaultSizeMenu = 256;
-
-  final double tabletHorizontalMargin = 120.0;
-  final double tabletVerticalMargin = 200.0;
 
   bool isScreenWithShortestSide(BuildContext context) => MediaQuery.of(context).size.shortestSide < minTabletWidth;
 
@@ -30,7 +20,13 @@ class ResponsiveUtils {
 
   bool isLandscape(BuildContext context) => MediaQuery.of(context).orientation == Orientation.landscape;
 
+  bool isPortrait(BuildContext context) => MediaQuery.of(context).orientation == Orientation.portrait;
+
   bool isLandscapeMobile(BuildContext context) => isScreenWithShortestSide(context) && isLandscape(context);
+
+  bool isPortraitMobile(BuildContext context) => isScreenWithShortestSide(context) && isPortrait(context);
+
+  bool isMobileResponsive(BuildContext context) => isPortraitMobile(context) && isLandscapeMobile(context);
 
   bool isLandscapeTablet(BuildContext context) {
     return MediaQuery.of(context).size.shortestSide >= minTabletWidth &&

@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:rich_text_composer/models/types.dart';
 import 'package:rich_text_composer/richtext_controller.dart';
 import 'package:rich_text_composer/views/commons/colors.dart';
 import 'package:rich_text_composer/views/commons/image_paths.dart';
+import 'package:rich_text_composer/views/commons/utils/responsive_utils.dart';
+import 'package:rich_text_composer/views/widgets/color_picker_keyboard.dart';
+import 'package:rich_text_composer/views/widgets/dialog/dialog_utils.dart';
 import 'package:rich_text_composer/views/widgets/list_header_style.dart';
 import 'package:rich_text_composer/views/widgets/mobile/option_bottom_sheet.dart';
 import 'package:rich_text_composer/views/widgets/responsive/responsive_widget.dart';
 import 'package:rich_text_composer/views/widgets/rich_text_keyboard_toolbar.dart';
-import 'package:enough_html_editor/enough_html_editor.dart' as html_editor;
-
-import '../../../models/types.dart';
-import '../list_color.dart';
 
 class RichTextOption extends StatelessWidget {
   RichTextOption({
     super.key,
-    this.htmlEditorApi,
     required this.richTextController,
     required this.titleQuickStyleBottomSheet,
     required this.titleForegroundBottomSheet,
@@ -25,14 +24,15 @@ class RichTextOption extends StatelessWidget {
   final String titleQuickStyleBottomSheet;
   final String titleForegroundBottomSheet;
   final String titleBackgroundBottomSheet;
-  final ImagePaths _imagePaths = ImagePaths();
-  final html_editor.HtmlEditorApi? htmlEditorApi;
   final RichTextController richTextController;
+
+  final ImagePaths _imagePaths = ImagePaths();
+  final ResponsiveUtils _responsiveUtils = ResponsiveUtils();
 
   @override
   Widget build(BuildContext context) {
     return ResponsiveWidget(
-      responsiveUtils: richTextController.responsiveUtils,
+      responsiveUtils: _responsiveUtils,
       mobile: _buildBodyForMobile(context),
       landscapeMobile: _buildBodyForLandscapeMobile(context),
       landscapeTablet: _buildBodyForMobile(context),
@@ -42,6 +42,7 @@ class RichTextOption extends StatelessWidget {
 
   Widget _buildBodyForMobile(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSpecialStyle(),
@@ -115,47 +116,30 @@ class RichTextOption extends StatelessWidget {
         valueListenable: richTextController.listSpecialTextStyleApply,
         builder: (context, value, _) {
           return Row(
-            mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _buildIconButton(
-                richTextController
-                    .isTextStyleTypeSelected(SpecialStyleType.bold),
-                () {
-                  richTextController.selectTextStyleType(
-                      SpecialStyleType.bold, context);
-                },
-                _imagePaths.icBoldStyle,
+                richTextController.isTextStyleTypeSelected(SpecialStyleType.bold),
+                () =>  richTextController.selectTextStyleType(SpecialStyleType.bold, context),
+                _imagePaths.icBoldStyle
               ),
               _buildVerticalDivider(),
               _buildIconButton(
-                richTextController
-                    .isTextStyleTypeSelected(SpecialStyleType.italic),
-                () {
-                  richTextController.selectTextStyleType(
-                      SpecialStyleType.italic, context);
-                },
-                _imagePaths.icItalicStyle,
+                richTextController.isTextStyleTypeSelected(SpecialStyleType.italic),
+                () => richTextController.selectTextStyleType(SpecialStyleType.italic, context),
+                _imagePaths.icItalicStyle
               ),
               _buildVerticalDivider(),
               _buildIconButton(
-                richTextController
-                    .isTextStyleTypeSelected(SpecialStyleType.strikeThrough),
-                () {
-                  richTextController.selectTextStyleType(
-                      SpecialStyleType.strikeThrough, context);
-                },
-                _imagePaths.icStrikeThrough,
+                richTextController.isTextStyleTypeSelected(SpecialStyleType.strikeThrough),
+                () => richTextController.selectTextStyleType(SpecialStyleType.strikeThrough, context),
+                _imagePaths.icStrikeThrough
               ),
               _buildVerticalDivider(),
               _buildIconButton(
-                richTextController
-                    .isTextStyleTypeSelected(SpecialStyleType.underline),
-                () {
-                  richTextController.selectTextStyleType(
-                      SpecialStyleType.underline, context);
-                },
-                _imagePaths.icUnderLine,
+                richTextController.isTextStyleTypeSelected(SpecialStyleType.underline),
+                () => richTextController.selectTextStyleType(SpecialStyleType.underline, context),
+                _imagePaths.icUnderLine
               ),
             ],
           );
@@ -168,47 +152,45 @@ class RichTextOption extends StatelessWidget {
     return _buildBorderContainer(
       InkWell(
         onTap: () {
-          if (richTextController.responsiveUtils.isMobile(context)) {
-            showModalBottomSheet(
-              isScrollControlled:
-                  richTextController.responsiveUtils.isLandscapeMobile(context),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+          if (_responsiveUtils.isMobileResponsive(context)) {
+            DialogUtils.showDialogBottomSheet(context, OptionBottomSheet(
+              title: titleQuickStyleBottomSheet,
+              child: ListHeaderStyle(
+                itemSelected: (style) {
+                  richTextController.headerStyleTypeApply.value = style;
+                  richTextController.applyHeaderStyle();
+                  Navigator.of(context).pop();
+                },
               ),
-              backgroundColor: Colors.white,
-              context: context,
-              builder: (_) {
-                return OptionBottomSheet(
-                  title: titleQuickStyleBottomSheet,
-                  child: ListHeaderStyle(
-                    itemSelected: (item) {
-                      Navigator.of(context).pop();
-                      richTextController.headerStyleTypeApply.value = item;
-                    },
-                  ),
-                );
-              },
-            );
+            ));
           } else {
-            richTextController.showDialogSelectHeaderStyle(
+            DialogUtils.showDialogCenter(
               context,
-              titleQuickStyleBottomSheet,
-            );
+              builder: (context) {
+                return OptionBottomSheet(
+                    title: titleQuickStyleBottomSheet,
+                    child: ListHeaderStyle(
+                      itemSelected: (style) {
+                        richTextController.headerStyleTypeApply.value = style;
+                        richTextController.applyHeaderStyle();
+                        Navigator.of(context).pop();
+                      },
+                    )
+                );
+              });
           }
         },
+        customBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
         child: Row(
-          mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ValueListenableBuilder(
                 valueListenable: richTextController.headerStyleTypeApply,
                 builder: (context, value, _) {
                   return Text(
-                    richTextController.headerStyleTypeApply.value ==
-                            HeaderStyleType.normal
+                    richTextController.headerStyleTypeApply.value == HeaderStyleType.normal
                         ? titleQuickStyleBottomSheet
-                        : richTextController
-                            .headerStyleTypeApply.value.styleName,
+                        : richTextController.headerStyleTypeApply.value.styleName,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                     textAlign: TextAlign.center,
@@ -239,29 +221,25 @@ class RichTextOption extends StatelessWidget {
       valueListenable: richTextController.paragraphTypeApply,
       builder: (context, value, _) {
         return Row(
-          mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _buildIconButton(
-                richTextController.paragraphTypeApply.value ==
-                    ParagraphType.alignLeft, () {
-              richTextController.selectParagraphType(
-                  ParagraphType.alignLeft, context);
-            }, _imagePaths.icAlignLeft),
+              richTextController.paragraphTypeApply.value == ParagraphType.alignLeft,
+              () => richTextController.selectParagraphType(ParagraphType.alignLeft, context),
+              _imagePaths.icAlignLeft
+            ),
             _buildVerticalDivider(),
             _buildIconButton(
-                richTextController.paragraphTypeApply.value ==
-                    ParagraphType.alignCenter, () {
-              richTextController.selectParagraphType(
-                  ParagraphType.alignCenter, context);
-            }, _imagePaths.icAlignCenter),
+              richTextController.paragraphTypeApply.value == ParagraphType.alignCenter,
+              () => richTextController.selectParagraphType(ParagraphType.alignCenter, context),
+              _imagePaths.icAlignCenter
+            ),
             _buildVerticalDivider(),
             _buildIconButton(
-                richTextController.paragraphTypeApply.value ==
-                    ParagraphType.alignRight, () {
-              richTextController.selectParagraphType(
-                  ParagraphType.alignRight, context);
-            }, _imagePaths.icAlignRight),
+              richTextController.paragraphTypeApply.value == ParagraphType.alignRight,
+              () => richTextController.selectParagraphType(ParagraphType.alignRight, context),
+              _imagePaths.icAlignRight
+            ),
           ],
         );
       },
@@ -271,7 +249,6 @@ class RichTextOption extends StatelessWidget {
   Widget _buildColorStyle(BuildContext context) {
     return _buildBorderContainer(
       Row(
-        mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           ValueListenableBuilder(
@@ -280,42 +257,24 @@ class RichTextOption extends StatelessWidget {
                 return _buildIconButton(
                   true,
                   () {
-                    if (richTextController.responsiveUtils.isMobile(context)) {
-                      showModalBottomSheet(
-                          isScrollControlled: richTextController.responsiveUtils
-                              .isLandscapeMobile(context),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          constraints: const BoxConstraints(
-                            maxHeight: 300,
-                            maxWidth: 700,
-                          ),
-                          backgroundColor: Colors.white,
-                          context: context,
-                          builder: (_) {
-                            return ValueListenableBuilder(
-                                valueListenable:
-                                    richTextController.selectedTextColor,
-                                builder: (context, _, __) {
-                                  return OptionBottomSheet(
-                                    title: titleForegroundBottomSheet,
-                                    padding: const EdgeInsets.all(0),
-                                    child: ColorPickerKeyboard(
-                                      currentColor: richTextController
-                                          .selectedTextColor.value,
-                                      onSelected: (color) {
-                                        richTextController.selectTextColor(
-                                            color, context);
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                  );
-                                });
-                          });
+                    if (_responsiveUtils.isMobileResponsive(context)) {
+                      DialogUtils.showDialogBottomSheet(context, ValueListenableBuilder(
+                        valueListenable: richTextController.selectedTextColor,
+                        builder: (context, _, __) {
+                          return OptionBottomSheet(
+                            title: titleForegroundBottomSheet,
+                            child: ColorPickerKeyboard(
+                              currentColor: richTextController.selectedTextColor.value,
+                              onSelected: (color) {
+                                richTextController.selectTextColor(color, context);
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          );
+                        }
+                      ));
                     } else {
-                      richTextController
-                          .currentIndexStackOverlayRichTextForTablet.value = 1;
+                      richTextController.currentIndexStackOverlayRichTextForTablet.value = 1;
                     }
                   },
                   _imagePaths.icTextColor,
@@ -329,48 +288,28 @@ class RichTextOption extends StatelessWidget {
                 return _buildIconButton(
                   true,
                   () {
-                    if (richTextController.responsiveUtils.isMobile(context)) {
-                      showModalBottomSheet(
-                          isScrollControlled: richTextController.responsiveUtils
-                              .isLandscapeMobile(context),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          constraints: const BoxConstraints(
-                            maxHeight: 300,
-                            maxWidth: 700,
-                          ),
-                          backgroundColor: Colors.white,
-                          context: context,
-                          builder: (_) {
-                            return ValueListenableBuilder(
-                                valueListenable:
-                                    richTextController.selectedTextColor,
-                                builder: (context, _, __) {
-                                  return OptionBottomSheet(
-                                    padding: const EdgeInsets.all(0),
-                                    title: titleBackgroundBottomSheet,
-                                    child: ColorPickerKeyboard(
-                                      currentColor: richTextController
-                                          .selectedTextColor.value,
-                                      onSelected: (color) {
-                                        richTextController
-                                            .selectBackgroundColor(
-                                                color, context);
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                  );
-                                });
-                          });
+                    if (_responsiveUtils.isMobileResponsive(context)) {
+                      DialogUtils.showDialogBottomSheet(context, ValueListenableBuilder(
+                        valueListenable: richTextController.selectedTextBackgroundColor,
+                        builder: (context, _, __) {
+                          return OptionBottomSheet(
+                            title: titleBackgroundBottomSheet,
+                            child: ColorPickerKeyboard(
+                              currentColor: richTextController.selectedTextBackgroundColor.value,
+                              onSelected: (color) {
+                                richTextController.selectBackgroundColor(color, context);
+                                Navigator.of(context).pop();
+                              },
+                            )
+                          );
+                        }
+                      ));
                     } else {
-                      richTextController
-                          .currentIndexStackOverlayRichTextForTablet.value = 2;
+                      richTextController.currentIndexStackOverlayRichTextForTablet.value = 2;
                     }
                   },
                   _imagePaths.icBackgroundColor,
-                  iconColor:
-                      richTextController.selectedTextBackgroundColor.value,
+                  iconColor: richTextController.selectedTextBackgroundColor.value,
                 );
               })
         ],
@@ -380,60 +319,53 @@ class RichTextOption extends StatelessWidget {
 
   Widget _buildFormatStyle() {
     return _buildBorderContainer(ValueListenableBuilder(
-        valueListenable: richTextController.dentTypeApply,
-        builder: (context, value, _) {
-          return Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildIconButton(
-                  richTextController.dentTypeApply.value == DentType.indent,
-                  () {
-                richTextController.selectDentTypeType(DentType.indent, context);
-              }, _imagePaths.icIndentFormat),
-              _buildVerticalDivider(),
-              _buildIconButton(
-                  richTextController.dentTypeApply.value == DentType.outdent,
-                  () {
-                richTextController.selectDentTypeType(
-                    DentType.outdent, context);
-              }, _imagePaths.icOutDentFormat),
-            ],
-          );
-        }));
+      valueListenable: richTextController.dentTypeApply,
+      builder: (context, value, _) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _buildIconButton(
+              richTextController.dentTypeApply.value == DentType.indent,
+              () => richTextController.selectDentTypeType(DentType.indent, context),
+              _imagePaths.icIndentFormat),
+            _buildVerticalDivider(),
+            _buildIconButton(
+              richTextController.dentTypeApply.value == DentType.outdent,
+              () => richTextController.selectDentTypeType(DentType.outdent, context),
+              _imagePaths.icOutDentFormat
+            ),
+          ],
+        );
+      }
+    ));
   }
 
   Widget _buildOrderListStyle() {
     return _buildBorderContainer(ValueListenableBuilder(
-        valueListenable: richTextController.orderListTypeApply,
-        builder: (context, value, _) {
-          return Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildIconButton(
-                  richTextController.orderListTypeApply.value ==
-                      OrderListType.bulletedList, () {
-                richTextController.selectOrderListType(
-                    OrderListType.bulletedList, context);
-              }, _imagePaths.icBulletOrder),
-              _buildVerticalDivider(),
-              _buildIconButton(
-                  richTextController.orderListTypeApply.value ==
-                      OrderListType.numberedList, () {
-                richTextController.selectOrderListType(
-                    OrderListType.numberedList, context);
-              }, _imagePaths.icNumberOrder),
-            ],
-          );
-        }));
+      valueListenable: richTextController.orderListTypeApply,
+      builder: (context, value, _) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _buildIconButton(
+              richTextController.orderListTypeApply.value == OrderListType.bulletedList,
+              () => richTextController.selectOrderListType(OrderListType.bulletedList, context),
+              _imagePaths.icBulletOrder
+            ),
+            _buildVerticalDivider(),
+            _buildIconButton(
+              richTextController.orderListTypeApply.value == OrderListType.numberedList,
+              () => richTextController.selectOrderListType(OrderListType.numberedList, context),
+              _imagePaths.icNumberOrder
+            ),
+          ],
+        );
+      }
+    ));
   }
 
   Widget _buildVerticalDivider() {
-    return Container(
-      width: 1,
-      color: CommonColor.colorBorderGray,
-    );
+    return Container(width: 1, color: CommonColor.colorBorderGray);
   }
 
   Widget _buildIconButton(
@@ -446,7 +378,7 @@ class RichTextOption extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Container(
-          color: isSelected ? CommonColor.colorBackgroundSelect : Colors.white,
+          color: isSelected ? CommonColor.colorBackgroundSelect : Colors.transparent,
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
           height: double.infinity,
           child: LimitedBox(

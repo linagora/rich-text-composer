@@ -37,7 +37,7 @@ enum HeaderStyleType {
   String get styleValue {
     switch (this) {
       case HeaderStyleType.normal:
-        return 'div';
+        return 'p';
       case HeaderStyleType.blockquote:
         return 'blockquote';
       case HeaderStyleType.code:
