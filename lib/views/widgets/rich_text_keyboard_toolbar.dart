@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:rich_text_composer/richtext_controller.dart';
+import 'package:rich_text_composer/views/commons/colors.dart';
 import 'package:rich_text_composer/views/commons/image_paths.dart';
-import 'package:rich_text_composer/views/widgets/list_color.dart';
+import 'package:rich_text_composer/views/commons/utils/responsive_utils.dart';
+import 'package:rich_text_composer/views/widgets/color_picker_keyboard.dart';
 import 'package:rich_text_composer/views/widgets/mobile/rich_text_option.dart';
 import 'package:rich_text_composer/views/widgets/tablet/option_container_for_tablet.dart';
 
@@ -14,7 +18,6 @@ class RichTextKeyboardToolBar extends StatelessWidget {
   final bool? isLandScapeMode;
   final VoidCallback? insertImage;
   final VoidCallback? insertAttachment;
-  final ImagePaths _imagePaths = ImagePaths();
   final String titleFormatBottomSheet;
   final String titleBack;
   final String titleQuickStyleBottomSheet;
@@ -23,27 +26,33 @@ class RichTextKeyboardToolBar extends StatelessWidget {
   final RichTextController richTextController;
   final Color backgroundKeyboardToolBarColor;
   final double? heightToolBar;
+  final EdgeInsets? paddingToolbar;
+  final EdgeInsets? paddingIcon;
+
+  final ImagePaths _imagePaths = ImagePaths();
+  final ResponsiveUtils _responsiveUtils = ResponsiveUtils();
 
   RichTextKeyboardToolBar({
     super.key,
     this.insertImage,
     this.insertAttachment,
     this.isLandScapeMode,
-    required this.backgroundKeyboardToolBarColor,
+    this.backgroundKeyboardToolBarColor = CommonColor.colorBackgroundToolBar,
     this.heightToolBar = defaultKeyboardToolbarHeight,
+    this.paddingToolbar,
+    this.paddingIcon,
     required this.richTextController,
-    required this.titleFormatBottomSheet,
-    required this.titleForegroundBottomSheet,
-    required this.titleBackgroundBottomSheet,
-    required this.titleQuickStyleBottomSheet,
-    required this.titleBack,
+    this.titleFormatBottomSheet = 'Format',
+    this.titleForegroundBottomSheet = 'Foreground',
+    this.titleBackgroundBottomSheet = 'Background',
+    this.titleQuickStyleBottomSheet = 'Quick styles',
+    this.titleBack = 'Format',
   });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ValueListenableBuilder(
@@ -58,6 +67,7 @@ class RichTextKeyboardToolBar extends StatelessWidget {
             height: defaultKeyboardToolbarHeight,
             color: backgroundKeyboardToolBarColor,
             alignment: Alignment.centerLeft,
+            padding: paddingToolbar,
             child: Row(
               mainAxisAlignment: isLandScapeMode == true
                   ? MainAxisAlignment.spaceEvenly
@@ -71,6 +81,7 @@ class RichTextKeyboardToolBar extends StatelessWidget {
                       fit: BoxFit.fill,
                       package: packageName,
                     ),
+                    padding: paddingIcon,
                     onTap: () => insertAttachment?.call(),
                   ),
                 if (insertImage != null)
@@ -80,6 +91,7 @@ class RichTextKeyboardToolBar extends StatelessWidget {
                       fit: BoxFit.fill,
                       package: packageName,
                     ),
+                    padding: paddingIcon,
                     onTap: () => insertImage?.call(),
                   ),
                 _buildIcon(
@@ -89,8 +101,15 @@ class RichTextKeyboardToolBar extends StatelessWidget {
                     package: packageName,
                     fit: BoxFit.fill,
                   ),
-                  onTap: () {
-                    if (richTextController.responsiveUtils.isMobile(context)) {
+                  padding: paddingIcon,
+                  onTap: () async {
+                    if (_responsiveUtils.isMobileResponsive(context)) {
+                      await richTextController.htmlEditorApi?.unfocus();
+
+                      if (Platform.isAndroid) {
+                        await richTextController.htmlEditorApi?.storeSelectionRange();
+                      }
+
                       richTextController.showRichTextBottomSheet(
                         context: context,
                         titleFormatBottomSheet: titleFormatBottomSheet,
@@ -99,9 +118,8 @@ class RichTextKeyboardToolBar extends StatelessWidget {
                         titleBackgroundBottomSheet: titleBackgroundBottomSheet,
                       );
                     } else {
-                      richTextController.applyRichTextOptionForTablet.value =
-                          !richTextController
-                              .applyRichTextOptionForTablet.value;
+                      final newStateRichTextOptionForTablet = !richTextController.applyRichTextOptionForTablet.value;
+                      richTextController.applyRichTextOptionForTablet.value = newStateRichTextOptionForTablet;
                     }
                   },
                 ),
@@ -117,65 +135,61 @@ class RichTextKeyboardToolBar extends StatelessWidget {
       builder: (context, value, _) {
         return Container(
           transform: Matrix4.translationValues(
-              richTextController.dxRichTextButtonPosition.value - 34, 0.0, 0.0),
+              richTextController.dxRichTextButtonPosition.value.toDouble() - 35.0,
+              0.0,
+              0.0),
           child: ValueListenableBuilder(
-              valueListenable:
-                  richTextController.currentIndexStackOverlayRichTextForTablet,
+              valueListenable: richTextController.currentIndexStackOverlayRichTextForTablet,
               builder: (context, value, _) {
-                return IndexedStack(
-                  index: richTextController
-                      .currentIndexStackOverlayRichTextForTablet.value,
-                  children: [
-                    OptionContainerForTablet(
-                      richTextController: richTextController,
-                      title: titleFormatBottomSheet,
-                      child: RichTextOption(
-                        richTextController: richTextController,
-                        htmlEditorApi: richTextController.htmlEditorApi,
-                        titleQuickStyleBottomSheet: titleQuickStyleBottomSheet,
-                        titleForegroundBottomSheet: titleForegroundBottomSheet,
-                        titleBackgroundBottomSheet: titleBackgroundBottomSheet,
-                      ),
-                    ),
-                    ValueListenableBuilder(
-                        valueListenable: richTextController.selectedTextColor,
-                        builder: (context, _, __) {
-                          return OptionContainerForTablet(
-                            padding: EdgeInsets.zero,
+                return LayoutBuilder(builder: (context, constraint) {
+                  return Stack(
+                    children: [
+                      if (value == 0)
+                        OptionContainerForTablet(
+                          richTextController: richTextController,
+                          title: titleFormatBottomSheet,
+                          child: RichTextOption(
                             richTextController: richTextController,
-                            titleBack: titleBack,
-                            title: titleForegroundBottomSheet,
-                            child: ColorPickerKeyboard(
-                              currentColor:
-                                  richTextController.selectedTextColor.value,
-                              onSelected: (color) {
-                                richTextController.selectTextColor(
-                                    color, context);
-                              },
-                            ),
-                          );
-                        }),
-                    ValueListenableBuilder(
-                        valueListenable:
-                            richTextController.selectedTextBackgroundColor,
-                        builder: (context, _, __) {
-                          return OptionContainerForTablet(
-                            padding: EdgeInsets.zero,
-                            richTextController: richTextController,
-                            titleBack: titleBack,
-                            title: titleBackgroundBottomSheet,
-                            child: ColorPickerKeyboard(
-                              currentColor: richTextController
-                                  .selectedTextBackgroundColor.value,
-                              onSelected: (color) {
-                                richTextController.selectBackgroundColor(
-                                    color, context);
-                              },
-                            ),
-                          );
-                        })
-                  ],
-                );
+                            titleQuickStyleBottomSheet: titleQuickStyleBottomSheet,
+                            titleForegroundBottomSheet: titleForegroundBottomSheet,
+                            titleBackgroundBottomSheet: titleBackgroundBottomSheet,
+                          ),
+                        ),
+                      if (value == 1)
+                        ValueListenableBuilder(
+                            valueListenable: richTextController.selectedTextColor,
+                            builder: (context, value, __) {
+                              return OptionContainerForTablet(
+                                richTextController: richTextController,
+                                titleBack: titleBack,
+                                title: titleForegroundBottomSheet,
+                                child: ColorPickerKeyboard(
+                                  currentColor: richTextController.selectedTextColor.value,
+                                  onSelected: (color) {
+                                    richTextController.selectTextColor(color, context);
+                                  },
+                                ),
+                              );
+                            }),
+                      if (value == 2)
+                        ValueListenableBuilder(
+                            valueListenable: richTextController.selectedTextBackgroundColor,
+                            builder: (context, _, __) {
+                              return OptionContainerForTablet(
+                                richTextController: richTextController,
+                                titleBack: titleBack,
+                                title: titleBackgroundBottomSheet,
+                                child: ColorPickerKeyboard(
+                                  currentColor: richTextController.selectedTextBackgroundColor.value,
+                                  onSelected: (color) {
+                                    richTextController.selectBackgroundColor(color, context);
+                                  },
+                                ),
+                              );
+                            })
+                    ],
+                  );
+                });
               }),
         );
       },
@@ -185,20 +199,23 @@ class RichTextKeyboardToolBar extends StatelessWidget {
   Widget _buildIcon({
     required Widget icon,
     OnTabCallback? onTap,
+    EdgeInsets? padding,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(left: 30),
-      child: InkWell(
-        onTap: onTap,
-        onTapDown: (details) {
-          final double position = details.globalPosition.dx / 30;
-          richTextController.dxRichTextButtonPosition.value =
-              position.floor() * 30 + 5;
-        },
-        child: SizedBox(
-          width: 30,
-          height: 30,
-          child: icon,
+      padding: padding ?? const EdgeInsets.only(left: 12),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          customBorder: const CircleBorder(),
+          onTapDown: (details) {
+            final double position = details.globalPosition.dx;
+            richTextController.dxRichTextButtonPosition.value = position.floor();
+          },
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            child: icon,
+          ),
         ),
       ),
     );

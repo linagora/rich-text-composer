@@ -12,7 +12,8 @@ class OptionContainerForTablet extends StatelessWidget {
     required this.title,
     required this.child,
     this.titleBack,
-    this.padding = const EdgeInsets.fromLTRB(16, 16, 16, 32),
+    this.padding = const EdgeInsets.only(left: 24, right: 24, top: 24, bottom: 35),
+    this.maxWidth = 320,
     required this.richTextController,
   }) : super(key: key);
 
@@ -21,6 +22,7 @@ class OptionContainerForTablet extends StatelessWidget {
   final Widget child;
   final RichTextController richTextController;
   final EdgeInsets padding;
+  final double maxWidth;
   final ImagePaths _imagePaths = ImagePaths();
 
   @override
@@ -31,27 +33,34 @@ class OptionContainerForTablet extends StatelessWidget {
         blurRadius: 48,
         color: Colors.grey.shade500,
       ),
-      child: SizedBox(
-        height: 310,
-        width: 320,
-        child: Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(
-              Radius.circular(16),
-            ),
+      child: Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(
+            Radius.circular(16),
           ),
-          child: Column(
+        ),
+        width: maxWidth,
+        constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height / 2 - 100),
+        child: SingleChildScrollView(
+          child: Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(8, 16, 16, 16),
-                child: Row(
-                  mainAxisAlignment: titleBack != null
-                      ? MainAxisAlignment.start
-                      : MainAxisAlignment.center,
-                  children: [
-                    titleBack != null
-                        ? InkWell(
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    height: 52,
+                    color: Colors.transparent,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      mainAxisAlignment: titleBack != null
+                          ? MainAxisAlignment.start
+                          : MainAxisAlignment.center,
+                      children: [
+                        titleBack != null
+                            ? InkWell(
                           onTap: () {
                             richTextController
                                 .currentIndexStackOverlayRichTextForTablet
@@ -77,49 +86,53 @@ class OptionContainerForTablet extends StatelessWidget {
                             ],
                           ),
                         )
-                        : const SizedBox(width: 72),
-                    Expanded(
-                      flex: 1,
-                      child: Text(
-                        title,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
+                            : const SizedBox(width: 72),
+                        Expanded(
+                          flex: 1,
+                          child: Text(
+                            title,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
                         ),
-                      ),
+                        Container(
+                          padding: const EdgeInsets.only(left: 48),
+                          width: 72,
+                          child: InkWell(
+                            onTap: () {
+                              richTextController
+                                  .applyRichTextOptionForTablet.value = false;
+                            },
+                            child: SvgPicture.asset(
+                              _imagePaths.icDismiss,
+                              fit: BoxFit.fill,
+                              width: 24,
+                              height: 24,
+                              package: packageName,
+                            ),
+                          ),
+                        )
+                      ],
                     ),
-                    Container(
-                      padding: const EdgeInsets.only(left: 48),
-                      width: 72,
-                      child: InkWell(
-                        onTap: () {
-                          richTextController
-                              .applyRichTextOptionForTablet.value = false;
-                        },
-                        child: SvgPicture.asset(
-                          _imagePaths.icDismiss,
-                          fit: BoxFit.fill,
-                          width: 24,
-                          height: 24,
-                          package: packageName,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
+                  ),
+                  Container(color: CommonColor.colorBorderGray, height: 1),
+                ],
               ),
-              Container(color: CommonColor.colorBorderGray, height: 1),
-              Expanded(
-                child: Padding(
-                  padding: padding,
-                  child: child,
-                ),
-              ),
-            ],
-          ),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: padding,
+                    child: child,
+                  ),
+                ],
+              )
+          ]),
         ),
       ),
     );

@@ -43,7 +43,6 @@ class KeyboardRichText extends StatelessWidget {
             },
           ),
         ),
-
       ]);
     });
   }

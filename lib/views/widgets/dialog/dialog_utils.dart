@@ -30,7 +30,10 @@ class DialogUtils {
     );
   }
 
-  static void showDialogCenter(BuildContext context, Widget child) {
+  static void showDialogCenter(
+      BuildContext context,
+      {required Widget Function(BuildContext context) builder}
+  ) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -40,7 +43,7 @@ class DialogUtils {
           content: SizedBox(
             width: 448,
             height: 436,
-            child: child,
+            child: builder.call(context),
           ),
         );
       },
