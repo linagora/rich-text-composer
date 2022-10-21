@@ -6,7 +6,6 @@ class DialogUtils {
   static void showDialogBottomSheet(BuildContext context, Widget child) {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(16),
@@ -14,12 +13,12 @@ class DialogUtils {
       ),
       barrierColor: Colors.black38,
       backgroundColor: Colors.white,
-      constraints: const BoxConstraints(maxWidth: 716),
+      constraints: const BoxConstraints(maxWidth: 600),
       builder: (_) {
         return LayoutBuilder(
             builder: (context, _) {
               return AnimatedPadding(
-                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                  padding: EdgeInsets.zero,
                   duration: const Duration(milliseconds: 150),
                   curve: Curves.easeOut,
                   child: child
