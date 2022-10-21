@@ -25,66 +25,71 @@ class OptionBottomSheet extends StatelessWidget {
       child: SafeArea(
         left: _responsiveUtils.isPortraitMobile(context),
         right: _responsiveUtils.isPortraitMobile(context),
-        child: Wrap(
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  height: 52,
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(16),
-                      topRight: Radius.circular(16),),
-                    color: Colors.white,
-                  ),
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    children: [
-                      const SizedBox(
-                        width: 24,
-                        height: 24,
-                      ),
-                      Expanded(
-                        child: Text(
-                          title,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: SvgPicture.asset(
-                          _imagePaths.icDismiss,
-                          fit: BoxFit.fill,
+        child: Container(
+          color: Colors.transparent,
+          constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height - 40),
+          child: Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    height: 52,
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(16),
+                        topRight: Radius.circular(16),),
+                      color: Colors.white,
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      children: [
+                        const SizedBox(
                           width: 24,
                           height: 24,
-                          package: packageName,
                         ),
-                      ),
-                    ],
+                        Expanded(
+                          child: Text(
+                            title,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: SvgPicture.asset(
+                            _imagePaths.icDismiss,
+                            fit: BoxFit.fill,
+                            width: 24,
+                            height: 24,
+                            package: packageName,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Container(color: CommonColor.colorBorderGray, height: 1)
-              ]),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: padding,
-                  child: child,
-                )
-              ]
-            )
-          ],
+                  Container(color: CommonColor.colorBorderGray, height: 1)
+                ]),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: padding,
+                    child: child,
+                  )
+                ]
+              )
+            ],
+          ),
         ),
       ),
     );
