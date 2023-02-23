@@ -77,7 +77,7 @@ class RichTextKeyboardToolBar extends StatelessWidget {
                   _buildIcon(
                     icon: SvgPicture.asset(
                       _imagePaths.icAttachmentsComposer,
-                      color: Colors.black,
+                      colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn),
                       fit: BoxFit.fill,
                       package: packageName,
                     ),
@@ -97,7 +97,7 @@ class RichTextKeyboardToolBar extends StatelessWidget {
                 _buildIcon(
                   icon: SvgPicture.asset(
                     _imagePaths.icRichText,
-                    color: Colors.black,
+                    colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn),
                     package: packageName,
                     fit: BoxFit.fill,
                   ),
@@ -110,13 +110,15 @@ class RichTextKeyboardToolBar extends StatelessWidget {
                         await richTextController.htmlEditorApi?.unfocus();
                       }
 
-                      richTextController.showRichTextBottomSheet(
-                        context: context,
-                        titleFormatBottomSheet: titleFormatBottomSheet,
-                        titleQuickStyleBottomSheet: titleQuickStyleBottomSheet,
-                        titleForegroundBottomSheet: titleForegroundBottomSheet,
-                        titleBackgroundBottomSheet: titleBackgroundBottomSheet,
-                      );
+                      if (context.mounted) {
+                        richTextController.showRichTextBottomSheet(
+                          context: context,
+                          titleFormatBottomSheet: titleFormatBottomSheet,
+                          titleQuickStyleBottomSheet: titleQuickStyleBottomSheet,
+                          titleForegroundBottomSheet: titleForegroundBottomSheet,
+                          titleBackgroundBottomSheet: titleBackgroundBottomSheet,
+                        );
+                      }
                     } else {
                       final newStateRichTextOptionForTablet = !richTextController.applyRichTextOptionForTablet.value;
                       richTextController.applyRichTextOptionForTablet.value = newStateRichTextOptionForTablet;

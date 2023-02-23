@@ -378,9 +378,11 @@ class RichTextOption extends StatelessWidget {
             maxHeight: 28,
             child: SvgPicture.asset(
               asset,
-              color: isSelected && iconColor == null
-                  ? CommonColor.colorIconSelect
-                  : iconColor,
+              colorFilter: ColorFilter.mode(
+                !isSelected && iconColor != null
+                  ? iconColor
+                  : CommonColor.colorIconSelect,
+                BlendMode.srcIn),
               package: packageName,
               fit: BoxFit.contain,
             ),

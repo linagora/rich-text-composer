@@ -1,26 +1,27 @@
 name: rich_text_composer
-description: A new Flutter project.
-version: 0.0.1
+description: Unified rich text composer in Flutter
+version: 0.0.2
 publish_to: none
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
-  flutter: ">=1.17.0"
+  sdk: ">=2.19.2 <3.0.0"
+  flutter: ">=3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  flutter_keyboard_visibility: 5.2.0
-  flutter_svg: 1.1.0
+  flutter_keyboard_visibility: ^5.4.0
+  flutter_svg: ^2.0.2
 
   enough_html_editor:
     git:
       url: https://github.com/linagora/enough_html_editor.git
-      ref: email_supported
+      ref: upgrade-latest-flutter-version
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^2.0.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
