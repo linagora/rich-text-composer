@@ -10,11 +10,13 @@ class KeyboardRichText extends StatelessWidget {
     required this.child,
     required this.richTextController,
     required this.keyBroadToolbar,
+    this.paddingChild,
   }) : super(key: key);
 
   final Widget child;
   final Widget keyBroadToolbar;
   final RichTextController richTextController;
+  final EdgeInsets? paddingChild;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +25,7 @@ class KeyboardRichText extends StatelessWidget {
         SizedBox(
           height: double.infinity,
           child: Padding(
-            padding: const EdgeInsets.only(bottom: 64),
+            padding: paddingChild ?? const EdgeInsets.only(bottom: 64),
             child: child,
           ),
         ),
