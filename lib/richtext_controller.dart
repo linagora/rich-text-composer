@@ -310,6 +310,7 @@ class RichTextController {
     enough_html_editor.HtmlEditorApi editorApi, {
     VoidCallback? onFocus,
     VoidCallback? onEnterKeyDown,
+    Function(List<int>?)? onChangeCursor,
     required BuildContext context,
   }) {
     htmlEditorApi = editorApi;
@@ -324,6 +325,11 @@ class RichTextController {
     editorApi.onFocusOut = () {
       hideRichTextView();
     };
+
+    editorApi.onCursorCoordinatesChanged = (coordinates) {
+      onChangeCursor?.call(coordinates);
+    };
+
     listenHtmlEditorApi();
   }
 
