@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:rich_text_composer/richtext_controller.dart';
 import 'package:rich_text_composer/views/commons/colors.dart';
@@ -106,6 +107,7 @@ class RichTextKeyboardToolBar extends StatelessWidget {
                     if (_responsiveUtils.isMobileResponsive(context)) {
                       if (Platform.isAndroid) {
                         await richTextController.htmlEditorApi?.storeSelectionRange();
+                        SystemChannels.textInput.invokeMethod('TextInput.hide');
                       } else {
                         await richTextController.htmlEditorApi?.unfocus();
                       }
