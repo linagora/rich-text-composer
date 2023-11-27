@@ -15,8 +15,8 @@ dependencies:
 
   enough_html_editor:
     git:
-      url: https://github.com/aryan-more/enough_html_editor.git
-      ref: "patch-1"
+      url: https://github.com/linagora/enough_html_editor.git
+      ref: upgrade_v3.16.0
 
 dev_dependencies:
   flutter_test:
