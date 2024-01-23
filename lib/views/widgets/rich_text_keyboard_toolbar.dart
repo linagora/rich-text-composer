@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:rich_text_composer/richtext_controller.dart';
+import 'package:rich_text_composer/rich_text_controller.dart';
 import 'package:rich_text_composer/views/commons/colors.dart';
 import 'package:rich_text_composer/views/commons/image_paths.dart';
 import 'package:rich_text_composer/views/commons/utils/responsive_utils.dart';
