@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:rich_text_composer/views/commons/colors.dart';
 import 'package:rich_text_composer/views/commons/image_paths.dart';
-import 'package:rich_text_composer/views/commons/utils/responsive_utils.dart';
+import 'package:rich_text_composer/views/commons/responsive_utils.dart';
 import 'package:rich_text_composer/views/widgets/rich_text_keyboard_toolbar.dart';
 
 class OptionBottomSheet extends StatelessWidget {
-  OptionBottomSheet({
+  const OptionBottomSheet({
     Key? key,
     required this.title,
     required this.child,
@@ -16,15 +16,13 @@ class OptionBottomSheet extends StatelessWidget {
   final String title;
   final Widget child;
   final EdgeInsets padding;
-  final ImagePaths _imagePaths = ImagePaths();
-  final ResponsiveUtils _responsiveUtils = ResponsiveUtils();
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: SafeArea(
-        left: _responsiveUtils.isPortraitMobile(context),
-        right: _responsiveUtils.isPortraitMobile(context),
+        left: ResponsiveUtils().isPortraitMobile(context),
+        right: ResponsiveUtils().isPortraitMobile(context),
         child: Container(
           color: Colors.transparent,
           constraints: BoxConstraints(
@@ -67,7 +65,7 @@ class OptionBottomSheet extends StatelessWidget {
                             Navigator.of(context).pop();
                           },
                           child: SvgPicture.asset(
-                            _imagePaths.icDismiss,
+                            ImagePaths().icDismiss,
                             fit: BoxFit.fill,
                             width: 24,
                             height: 24,
