@@ -6,7 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:rich_text_composer/rich_text_controller.dart';
 import 'package:rich_text_composer/views/commons/colors.dart';
 import 'package:rich_text_composer/views/commons/image_paths.dart';
-import 'package:rich_text_composer/views/commons/utils/responsive_utils.dart';
+import 'package:rich_text_composer/views/commons/responsive_utils.dart';
 import 'package:rich_text_composer/views/widgets/color_picker_keyboard.dart';
 import 'package:rich_text_composer/views/widgets/mobile/rich_text_option.dart';
 import 'package:rich_text_composer/views/widgets/tablet/option_container_for_tablet.dart';
@@ -30,10 +30,7 @@ class RichTextKeyboardToolBar extends StatelessWidget {
   final EdgeInsets? paddingToolbar;
   final EdgeInsets? paddingIcon;
 
-  final ImagePaths _imagePaths = ImagePaths();
-  final ResponsiveUtils _responsiveUtils = ResponsiveUtils();
-
-  RichTextKeyboardToolBar({
+  const RichTextKeyboardToolBar({
     super.key,
     required this.richTextController,
     this.insertImage,
@@ -77,7 +74,7 @@ class RichTextKeyboardToolBar extends StatelessWidget {
                 if (insertAttachment != null)
                   _buildIcon(
                     icon: SvgPicture.asset(
-                      _imagePaths.icAttachmentsComposer,
+                      ImagePaths().icAttachmentsComposer,
                       colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn),
                       fit: BoxFit.fill,
                       package: packageName,
@@ -88,7 +85,7 @@ class RichTextKeyboardToolBar extends StatelessWidget {
                 if (insertImage != null)
                   _buildIcon(
                     icon: SvgPicture.asset(
-                      _imagePaths.icInsertImage,
+                      ImagePaths().icInsertImage,
                       fit: BoxFit.fill,
                       package: packageName,
                     ),
@@ -97,14 +94,14 @@ class RichTextKeyboardToolBar extends StatelessWidget {
                   ),
                 _buildIcon(
                   icon: SvgPicture.asset(
-                    _imagePaths.icRichText,
+                    ImagePaths().icRichText,
                     colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn),
                     package: packageName,
                     fit: BoxFit.fill,
                   ),
                   padding: paddingIcon,
                   onTap: () async {
-                    if (_responsiveUtils.isMobileResponsive(context)) {
+                    if (ResponsiveUtils().isMobile(context)) {
                       if (Platform.isAndroid) {
                         await richTextController.htmlEditorApi?.storeSelectionRange();
                         SystemChannels.textInput.invokeMethod('TextInput.hide');

@@ -4,7 +4,7 @@ import 'package:rich_text_composer/models/types.dart';
 import 'package:rich_text_composer/rich_text_controller.dart';
 import 'package:rich_text_composer/views/commons/colors.dart';
 import 'package:rich_text_composer/views/commons/image_paths.dart';
-import 'package:rich_text_composer/views/commons/utils/responsive_utils.dart';
+import 'package:rich_text_composer/views/commons/responsive_utils.dart';
 import 'package:rich_text_composer/views/widgets/color_picker_keyboard.dart';
 import 'package:rich_text_composer/views/widgets/dialog/dialog_utils.dart';
 import 'package:rich_text_composer/views/widgets/list_header_style.dart';
@@ -13,7 +13,7 @@ import 'package:rich_text_composer/views/widgets/responsive/responsive_widget.da
 import 'package:rich_text_composer/views/widgets/rich_text_keyboard_toolbar.dart';
 
 class RichTextOption extends StatelessWidget {
-  RichTextOption({
+  const RichTextOption({
     super.key,
     required this.richTextController,
     required this.titleQuickStyleBottomSheet,
@@ -26,17 +26,11 @@ class RichTextOption extends StatelessWidget {
   final String titleBackgroundBottomSheet;
   final RichTextController richTextController;
 
-  final ImagePaths _imagePaths = ImagePaths();
-  final ResponsiveUtils _responsiveUtils = ResponsiveUtils();
-
   @override
   Widget build(BuildContext context) {
     return ResponsiveWidget(
-      responsiveUtils: _responsiveUtils,
-      mobile: _buildBodyForMobile(context),
+      defaultDevice: _buildBodyForMobile(context),
       landscapeMobile: _buildBodyForLandscapeMobile(context),
-      landscapeTablet: _buildBodyForMobile(context),
-      tablet: _buildBodyForMobile(context),
     );
   }
 
@@ -121,25 +115,25 @@ class RichTextOption extends StatelessWidget {
               _buildIconButton(
                 richTextController.isTextStyleTypeSelected(SpecialStyleType.bold),
                 () =>  richTextController.selectTextStyleType(SpecialStyleType.bold, context),
-                _imagePaths.icBoldStyle
+                ImagePaths().icBoldStyle
               ),
               _buildVerticalDivider(),
               _buildIconButton(
                 richTextController.isTextStyleTypeSelected(SpecialStyleType.italic),
                 () => richTextController.selectTextStyleType(SpecialStyleType.italic, context),
-                _imagePaths.icItalicStyle
+                ImagePaths().icItalicStyle
               ),
               _buildVerticalDivider(),
               _buildIconButton(
                 richTextController.isTextStyleTypeSelected(SpecialStyleType.strikeThrough),
                 () => richTextController.selectTextStyleType(SpecialStyleType.strikeThrough, context),
-                _imagePaths.icStrikeThrough
+                ImagePaths().icStrikeThrough
               ),
               _buildVerticalDivider(),
               _buildIconButton(
                 richTextController.isTextStyleTypeSelected(SpecialStyleType.underline),
                 () => richTextController.selectTextStyleType(SpecialStyleType.underline, context),
-                _imagePaths.icUnderLine
+                ImagePaths().icUnderLine
               ),
             ],
           );
@@ -152,8 +146,8 @@ class RichTextOption extends StatelessWidget {
     return _buildBorderContainer(
       InkWell(
         onTap: () {
-          if (_responsiveUtils.isMobileResponsive(context)) {
-            DialogUtils.showDialogBottomSheet(context, OptionBottomSheet(
+          if (ResponsiveUtils().isPortraitMobile(context)) {
+            DialogUtils().showDialogBottomSheet(context, OptionBottomSheet(
               title: titleQuickStyleBottomSheet,
               child: ListHeaderStyle(
                 itemSelected: (style) {
@@ -163,7 +157,7 @@ class RichTextOption extends StatelessWidget {
               ),
             ));
           } else {
-            DialogUtils.showDialogCenter(
+            DialogUtils().showDialogCenter(
               context,
               builder: (context) {
                 return OptionBottomSheet(
@@ -197,7 +191,7 @@ class RichTextOption extends StatelessWidget {
               maxWidth: 28,
               maxHeight: 28,
               child: SvgPicture.asset(
-                _imagePaths.icArrowRight,
+                ImagePaths().icArrowRight,
                 package: packageName,
                 fit: BoxFit.contain,
               ),
@@ -218,19 +212,19 @@ class RichTextOption extends StatelessWidget {
             _buildIconButton(
               richTextController.paragraphTypeApply.value == ParagraphType.alignLeft,
               () => richTextController.selectParagraphType(ParagraphType.alignLeft, context),
-              _imagePaths.icAlignLeft
+              ImagePaths().icAlignLeft
             ),
             _buildVerticalDivider(),
             _buildIconButton(
               richTextController.paragraphTypeApply.value == ParagraphType.alignCenter,
               () => richTextController.selectParagraphType(ParagraphType.alignCenter, context),
-              _imagePaths.icAlignCenter
+              ImagePaths().icAlignCenter
             ),
             _buildVerticalDivider(),
             _buildIconButton(
               richTextController.paragraphTypeApply.value == ParagraphType.alignRight,
               () => richTextController.selectParagraphType(ParagraphType.alignRight, context),
-              _imagePaths.icAlignRight
+              ImagePaths().icAlignRight
             ),
           ],
         );
@@ -249,8 +243,8 @@ class RichTextOption extends StatelessWidget {
                 return _buildIconButton(
                   true,
                   () {
-                    if (_responsiveUtils.isMobileResponsive(context)) {
-                      DialogUtils.showDialogBottomSheet(context, ValueListenableBuilder(
+                    if (ResponsiveUtils().isPortraitMobile(context)) {
+                      DialogUtils().showDialogBottomSheet(context, ValueListenableBuilder(
                         valueListenable: richTextController.selectedTextColor,
                         builder: (context, _, __) {
                           return OptionBottomSheet(
@@ -269,7 +263,7 @@ class RichTextOption extends StatelessWidget {
                       richTextController.currentIndexStackOverlayRichTextForTablet.value = 1;
                     }
                   },
-                  _imagePaths.icTextColor,
+                  ImagePaths().icTextColor,
                   iconColor: richTextController.selectedTextColor.value,
                 );
               }),
@@ -280,8 +274,8 @@ class RichTextOption extends StatelessWidget {
                 return _buildIconButton(
                   true,
                   () {
-                    if (_responsiveUtils.isMobileResponsive(context)) {
-                      DialogUtils.showDialogBottomSheet(context, ValueListenableBuilder(
+                    if (ResponsiveUtils().isPortraitMobile(context)) {
+                      DialogUtils().showDialogBottomSheet(context, ValueListenableBuilder(
                         valueListenable: richTextController.selectedTextBackgroundColor,
                         builder: (context, _, __) {
                           return OptionBottomSheet(
@@ -300,7 +294,7 @@ class RichTextOption extends StatelessWidget {
                       richTextController.currentIndexStackOverlayRichTextForTablet.value = 2;
                     }
                   },
-                  _imagePaths.icBackgroundColor,
+                  ImagePaths().icBackgroundColor,
                   iconColor: richTextController.selectedTextBackgroundColor.value,
                 );
               })
@@ -319,12 +313,12 @@ class RichTextOption extends StatelessWidget {
             _buildIconButton(
               richTextController.dentTypeApply.value == DentType.indent,
               () => richTextController.selectDentTypeType(DentType.indent, context),
-              _imagePaths.icIndentFormat),
+              ImagePaths().icIndentFormat),
             _buildVerticalDivider(),
             _buildIconButton(
               richTextController.dentTypeApply.value == DentType.outdent,
               () => richTextController.selectDentTypeType(DentType.outdent, context),
-              _imagePaths.icOutDentFormat
+              ImagePaths().icOutDentFormat
             ),
           ],
         );
@@ -342,13 +336,13 @@ class RichTextOption extends StatelessWidget {
             _buildIconButton(
               richTextController.orderListTypeApply.value == OrderListType.bulletedList,
               () => richTextController.selectOrderListType(OrderListType.bulletedList, context),
-              _imagePaths.icBulletOrder
+              ImagePaths().icBulletOrder
             ),
             _buildVerticalDivider(),
             _buildIconButton(
               richTextController.orderListTypeApply.value == OrderListType.numberedList,
               () => richTextController.selectOrderListType(OrderListType.numberedList, context),
-              _imagePaths.icNumberOrder
+              ImagePaths().icNumberOrder
             ),
           ],
         );
