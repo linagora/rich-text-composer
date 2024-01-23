@@ -29,6 +29,12 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
 
+  plugin:
+    platforms:
+      android:
+        package: flutter.plugin.rich_text_composer
+        pluginClass: RichTextComposerPlugin
+
   uses-material-design: true
 
   assets:
