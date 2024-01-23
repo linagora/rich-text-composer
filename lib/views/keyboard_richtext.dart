@@ -2,7 +2,7 @@ library keyboard_richtext;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'package:rich_text_composer/richtext_controller.dart';
+import 'package:rich_text_composer/rich_text_controller.dart';
 
 class KeyboardRichText extends StatelessWidget {
   const KeyboardRichText({
