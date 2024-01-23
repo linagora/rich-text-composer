@@ -2,38 +2,37 @@
 import 'package:flutter/material.dart';
 
 class DialogUtils {
+  static DialogUtils? _instance;
 
-  static void showDialogBottomSheet(BuildContext context, Widget child) {
-    showModalBottomSheet(
+  DialogUtils._();
+
+  factory DialogUtils() => _instance ??= DialogUtils._();
+
+  Future showDialogBottomSheet(BuildContext context, Widget child) {
+    return showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(16),
-          topRight: Radius.circular(16)),
-      ),
+          topRight: Radius.circular(16))),
       barrierColor: Colors.black38,
       backgroundColor: Colors.white,
       constraints: const BoxConstraints(maxWidth: 600),
       builder: (_) {
-        return LayoutBuilder(
-            builder: (context, _) {
-              return AnimatedPadding(
-                  padding: EdgeInsets.zero,
-                  duration: const Duration(milliseconds: 150),
-                  curve: Curves.easeOut,
-                  child: child
-              );
-            }
-        );
+        return AnimatedPadding(
+          padding: EdgeInsets.zero,
+          duration: const Duration(milliseconds: 150),
+          curve: Curves.easeOut,
+          child: child);
       }
     );
   }
 
-  static void showDialogCenter(
+  Future showDialogCenter(
       BuildContext context,
       {required Widget Function(BuildContext context) builder}
   ) {
-    showDialog(
+    return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
