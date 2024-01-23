@@ -1,7 +1,7 @@
 library rich_text_composer;
 
 /// Views
-export 'views/keyboard_richtext.dart';
+export 'views/keyboard_rich_text.dart';
 
 /// Controller
 export 'rich_text_controller.dart';
