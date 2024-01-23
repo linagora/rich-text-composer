@@ -1,0 +1,3 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="flutter.plugin.rich_text_composer">
+</manifest>
