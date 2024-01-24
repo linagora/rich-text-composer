@@ -20,11 +20,9 @@ class RichTextController {
   final paragraphTypeApply = ValueNotifier<ParagraphType>(ParagraphType.alignLeft);
   final dentTypeApply = ValueNotifier<DentType?>(null);
   final orderListTypeApply = ValueNotifier<OrderListType?>(null);
-  final applyRichTextOptionForTablet = ValueNotifier<bool>(false);
   final selectedTextColor = ValueNotifier<Color>(Colors.black);
   final selectedTextBackgroundColor = ValueNotifier<Color>(Colors.white);
   final dxRichTextButtonPosition = ValueNotifier<int>(35);
-  final currentIndexStackOverlayRichTextForTablet = ValueNotifier<int>(0);
 
   final StreamController<bool> richTextStreamController = StreamController<bool>.broadcast();
 
@@ -83,21 +81,22 @@ class RichTextController {
 
   Future<void> showFormatOptionBottomSheet({
     required BuildContext context,
-    String? titleFormatBottomSheet,
-    String? titleQuickStyleBottomSheet,
-    String? titleForegroundBottomSheet,
-    String? titleBackgroundBottomSheet,
+    String? formatLabel,
+    String? foregroundLabel,
+    String? backgroundLabel,
+    String? quickStyleLabel,
   }) async {
     log('RichTextController::showFormatOptionBottomSheet:');
     await DialogUtils().showDialogBottomSheet(
       context,
       OptionBottomSheet(
-        title: titleFormatBottomSheet ?? 'Format',
+        title: formatLabel ?? 'Format',
         child: RichTextOption(
           richTextController: this,
-          titleQuickStyleBottomSheet: titleQuickStyleBottomSheet,
-          titleForegroundBottomSheet: titleForegroundBottomSheet,
-          titleBackgroundBottomSheet: titleBackgroundBottomSheet,
+          quickStyleLabel: quickStyleLabel,
+          foregroundLabel: foregroundLabel,
+          backgroundLabel: backgroundLabel,
+          padding: const EdgeInsets.all(24),
         )
       )
     ).whenComplete(showDeviceKeyboard);
@@ -313,7 +312,6 @@ class RichTextController {
 
   void dispose() {
     richTextStreamController.close();
-    applyRichTextOptionForTablet.dispose();
     listSpecialTextStyleApply.dispose();
     paragraphTypeApply.dispose();
     dentTypeApply.dispose();

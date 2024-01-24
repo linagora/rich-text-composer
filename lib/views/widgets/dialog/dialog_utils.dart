@@ -42,8 +42,6 @@ class DialogUtils {
           contentPadding: EdgeInsets.zero,
           clipBehavior: Clip.antiAlias,
           backgroundColor: Colors.white,
-          insetPadding: EdgeInsets.zero,
-          scrollable: true,
           shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
           content: SizedBox(
             width: 448,
