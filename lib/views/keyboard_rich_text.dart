@@ -10,42 +10,39 @@ class KeyboardRichText extends StatelessWidget {
     required this.child,
     required this.richTextController,
     required this.keyBroadToolbar,
-    this.paddingChild,
   }) : super(key: key);
 
   final Widget child;
   final Widget keyBroadToolbar;
   final RichTextController richTextController;
-  final EdgeInsets? paddingChild;
 
   @override
   Widget build(BuildContext context) {
-    return KeyboardVisibilityBuilder(builder: (context, isKeyboardVisible) {
-      return Stack(children: <Widget>[
-        SizedBox(
-          height: double.infinity,
-          child: Padding(
-            padding: paddingChild ?? const EdgeInsets.only(bottom: 64),
-            child: child,
-          ),
-        ),
-        Positioned(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-          left: 0,
-          right: 0,
-          child: StreamBuilder(
-            stream: richTextController.richTextStream,
-            builder: (context, snapshot) {
-              return Visibility(
-                visible: snapshot.hasData &&
-                    snapshot.data == true &&
-                    isKeyboardVisible,
-                child: keyBroadToolbar,
-              );
+    return Stack(children: <Widget>[
+      SizedBox(
+        height: double.infinity,
+        child: child),
+      KeyboardVisibilityBuilder(builder: (context, isKeyboardVisible) {
+        if (isKeyboardVisible) {
+          return ValueListenableBuilder(
+            valueListenable: richTextController.richTextToolbarNotifier,
+            builder: (_, value, child) {
+              if (value) {
+                return PositionedDirectional(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                  start: 0,
+                  end: 0,
+                  child: keyBroadToolbar,
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
             },
-          ),
-        ),
-      ]);
-    });
+          );
+        } else {
+          return const SizedBox.shrink();
+        }
+      })
+    ]);
   }
 }
