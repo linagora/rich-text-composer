@@ -66,7 +66,6 @@ class RichTextKeyboardToolBar extends StatelessWidget {
                 padding: iconPadding ?? const EdgeInsets.all(12),
                 child: SvgPicture.asset(
                   ImagePaths().icAttachmentsComposer,
-                  colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn),
                   fit: BoxFit.fill,
                   package: packageName,
                 ),
@@ -79,7 +78,6 @@ class RichTextKeyboardToolBar extends StatelessWidget {
                 padding: iconPadding ?? const EdgeInsets.all(12),
                 child: SvgPicture.asset(
                   ImagePaths().icInsertImage,
-                  colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn),
                   fit: BoxFit.fill,
                   package: packageName,
                 ),
@@ -92,7 +90,6 @@ class RichTextKeyboardToolBar extends StatelessWidget {
                 padding: iconPadding ?? const EdgeInsets.all(12),
                 child: SvgPicture.asset(
                   ImagePaths().icRichText,
-                  colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn),
                   fit: BoxFit.fill,
                   package: packageName,
                 ),
