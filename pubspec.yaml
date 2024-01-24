@@ -12,6 +12,7 @@ dependencies:
     sdk: flutter
   flutter_keyboard_visibility: ^6.0.0
   flutter_svg: ^2.0.2
+  flutter_portal: ^1.1.3
 
   enough_html_editor:
     git:
