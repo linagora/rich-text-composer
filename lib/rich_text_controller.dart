@@ -23,15 +23,12 @@ class RichTextController {
   final selectedTextColor = ValueNotifier<Color>(Colors.black);
   final selectedTextBackgroundColor = ValueNotifier<Color>(Colors.white);
   final dxRichTextButtonPosition = ValueNotifier<int>(35);
-
-  final StreamController<bool> richTextStreamController = StreamController<bool>.broadcast();
+  final richTextToolbarNotifier = ValueNotifier<bool>(false);
 
   bool isBoldStyleAppended = false;
   bool isItalicStyleAppended = false;
   bool isUnderlineAppended = false;
   bool isStrikeThroughAppended = false;
-
-  Stream<bool> get richTextStream => richTextStreamController.stream;
 
   void selectTextStyleType(SpecialStyleType richTextStyleType) {
     log('RichTextController::selectTextStyleType:richTextStyleType = $richTextStyleType | listSpecialTextStyleApply_BEFORE = ${listSpecialTextStyleApply.value}');
@@ -188,17 +185,17 @@ class RichTextController {
   }
 
   void showRichTextView() {
-    richTextStreamController.sink.add(true);
+    richTextToolbarNotifier.value = true;
   }
 
   void hideRichTextView() {
-    richTextStreamController.sink.add(false);
+    richTextToolbarNotifier.value = false;
   }
 
   void _onFocusEditor(VoidCallback? onFocus) {
     log('RichTextController::_onFocusEditor:');
-    onFocus?.call();
     showRichTextView();
+    onFocus?.call();
   }
 
   void onCreateHTMLEditor(
@@ -311,7 +308,7 @@ class RichTextController {
   }
 
   void dispose() {
-    richTextStreamController.close();
+    richTextToolbarNotifier.dispose();
     listSpecialTextStyleApply.dispose();
     paragraphTypeApply.dispose();
     dentTypeApply.dispose();
