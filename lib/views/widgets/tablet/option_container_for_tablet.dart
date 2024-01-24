@@ -4,7 +4,9 @@ import 'package:rich_text_composer/rich_text_composer.dart';
 import 'package:rich_text_composer/views/commons/colors.dart';
 import 'package:rich_text_composer/views/commons/constants.dart';
 import 'package:rich_text_composer/views/commons/image_paths.dart';
+import 'package:rich_text_composer/views/commons/logger.dart';
 import 'package:rich_text_composer/views/widgets/clipper/clipper_stack.dart';
+import 'package:rich_text_composer/views/widgets/divider/custom_horizontal_divider.dart';
 
 class OptionContainerForTablet extends StatelessWidget {
   const OptionContainerForTablet({
@@ -13,19 +15,22 @@ class OptionContainerForTablet extends StatelessWidget {
     required this.child,
     required this.richTextController,
     this.titleBack,
-    this.padding = const EdgeInsets.only(left: 24, right: 24, top: 24, bottom: 35),
     this.maxWidth = 320,
+    this.onCloseAction,
+    this.onBackAction,
   }) : super(key: key);
 
   final String title;
   final String? titleBack;
   final Widget child;
   final RichTextController richTextController;
-  final EdgeInsets padding;
   final double maxWidth;
+  final VoidCallback? onCloseAction;
+  final VoidCallback? onBackAction;
 
   @override
   Widget build(BuildContext context) {
+    log('OptionContainerForTablet::build TITLE = $title');
     return ClipShadowPath(
       clipper: ClipperStack(),
       shadow: Shadow(
@@ -42,97 +47,90 @@ class OptionContainerForTablet extends StatelessWidget {
         width: maxWidth,
         constraints: BoxConstraints(
             maxHeight: MediaQuery.of(context).size.height / 2 - 100),
-        child: SingleChildScrollView(
-          child: Wrap(
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              Column(
-                mainAxisSize: MainAxisSize.min,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              height: 52,
+              color: Colors.transparent,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Row(
+                mainAxisAlignment: titleBack != null
+                    ? MainAxisAlignment.start
+                    : MainAxisAlignment.center,
                 children: [
-                  Container(
-                    height: 52,
-                    color: Colors.transparent,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      mainAxisAlignment: titleBack != null
-                          ? MainAxisAlignment.start
-                          : MainAxisAlignment.center,
-                      children: [
-                        titleBack != null
-                            ? InkWell(
-                          onTap: () {
-                            richTextController
-                                .currentIndexStackOverlayRichTextForTablet
-                                .value = 0;
-                          },
+                  if (titleBack != null && onBackAction != null)
+                    Material(
+                      type: MaterialType.transparency,
+                      child: InkWell(
+                        onTap: onBackAction,
+                        borderRadius: const BorderRadius.all(Radius.circular(12)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               SvgPicture.asset(
                                 ImagePaths().icBack,
                                 fit: BoxFit.fill,
-                                width: 24,
-                                height: 24,
+                                width: 20,
+                                height: 20,
                                 package: packageName,
                               ),
                               const SizedBox(width: 4),
                               Text(
                                 titleBack!,
                                 style: const TextStyle(
-                                    fontSize: 15,
-                                    color: CommonColor.colorBlue),
-                              )
+                                  fontSize: 15,
+                                  color: CommonColor.colorBlue))
                             ],
                           ),
-                        )
-                            : const SizedBox(width: 72),
-                        Expanded(
-                          flex: 1,
-                          child: Text(
-                            title,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
                         ),
-                        Container(
-                          padding: const EdgeInsets.only(left: 48),
-                          width: 72,
-                          child: InkWell(
-                            onTap: () {
-                              richTextController
-                                  .applyRichTextOptionForTablet.value = false;
-                            },
+                      ),
+                    )
+                  else
+                    const SizedBox(width: 72),
+                  Expanded(
+                    child: Text(
+                      title,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  if (onCloseAction != null)
+                    Padding(
+                      padding: const EdgeInsetsDirectional.only(start: 12),
+                      child: Material(
+                        type: MaterialType.transparency,
+                        child: InkWell(
+                          onTap: onCloseAction,
+                          customBorder: const CircleBorder(),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8),
                             child: SvgPicture.asset(
                               ImagePaths().icDismiss,
                               fit: BoxFit.fill,
-                              width: 24,
-                              height: 24,
+                              width: 28,
+                              height: 28,
                               package: packageName,
                             ),
                           ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Container(color: CommonColor.colorBorderGray, height: 1),
+                        ),
+                      ),
+                    )
+                  else
+                    const SizedBox(width: 72),
                 ],
               ),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: padding,
-                    child: child,
-                  ),
-                ],
-              )
-          ]),
-        ),
+            ),
+            const CustomHorizontalDivider(),
+            Flexible(child: child)
+        ]),
       ),
     );
   }

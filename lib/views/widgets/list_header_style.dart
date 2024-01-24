@@ -15,14 +15,20 @@ class ListHeaderStyle extends StatelessWidget {
     return ListView.builder(
       itemCount: HeaderStyleType.values.length,
       shrinkWrap: true,
-      itemBuilder: (context, index) {
+      primary: false,
+      padding: const EdgeInsetsDirectional.all(24),
+      itemBuilder: (_, index) {
         final item = HeaderStyleType.values[index];
-        return InkWell(
+        return Material(
+          type: MaterialType.transparency,
+          child: InkWell(
             onTap: () => itemSelected.call(item),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 4),
               child: _buildItemDropdown(item),
-            ));
+            )
+          ),
+        );
       },
     );
   }
@@ -32,8 +38,8 @@ class ListHeaderStyle extends StatelessWidget {
       case HeaderStyleType.blockquote:
         return Container(
             decoration: const BoxDecoration(
-                border: Border(
-                    left: BorderSide(
+                border: BorderDirectional(
+                    start: BorderSide(
                         color: CommonColor.colorStyleBlockQuote,
                         width: 5.0))),
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
