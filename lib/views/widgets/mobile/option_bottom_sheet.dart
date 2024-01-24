@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:rich_text_composer/views/commons/colors.dart';
+import 'package:rich_text_composer/views/commons/constants.dart';
 import 'package:rich_text_composer/views/commons/image_paths.dart';
 import 'package:rich_text_composer/views/commons/responsive_utils.dart';
-import 'package:rich_text_composer/views/widgets/rich_text_keyboard_toolbar.dart';
 
 class OptionBottomSheet extends StatelessWidget {
   const OptionBottomSheet({
@@ -15,7 +15,7 @@ class OptionBottomSheet extends StatelessWidget {
 
   final String title;
   final Widget child;
-  final EdgeInsets padding;
+  final EdgeInsetsGeometry padding;
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +23,10 @@ class OptionBottomSheet extends StatelessWidget {
       child: SafeArea(
         left: ResponsiveUtils().isPortraitMobile(context),
         right: ResponsiveUtils().isPortraitMobile(context),
+        top: ResponsiveUtils().isMobile(context),
+        bottom: ResponsiveUtils().isMobile(context),
         child: Container(
-          color: Colors.transparent,
+          color: Colors.white,
           constraints: BoxConstraints(
               maxHeight: MediaQuery.of(context).size.height - 40),
           child: Wrap(
@@ -45,8 +47,8 @@ class OptionBottomSheet extends StatelessWidget {
                     child: Row(
                       children: [
                         const SizedBox(
-                          width: 24,
-                          height: 24,
+                          width: 28,
+                          height: 28,
                         ),
                         Expanded(
                           child: Text(
@@ -60,16 +62,17 @@ class OptionBottomSheet extends StatelessWidget {
                             ),
                           ),
                         ),
-                        InkWell(
-                          onTap: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: SvgPicture.asset(
-                            ImagePaths().icDismiss,
-                            fit: BoxFit.fill,
-                            width: 24,
-                            height: 24,
-                            package: packageName,
+                        Material(
+                          child: InkWell(
+                            onTap: Navigator.of(context).pop,
+                            customBorder: const CircleBorder(),
+                            child: SvgPicture.asset(
+                              ImagePaths().icDismiss,
+                              fit: BoxFit.fill,
+                              width: 28,
+                              height: 28,
+                              package: packageName,
+                            ),
                           ),
                         ),
                       ],
