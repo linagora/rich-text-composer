@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:rich_text_composer/rich_text_composer.dart';
 import 'package:rich_text_composer/views/commons/colors.dart';
+import 'package:rich_text_composer/views/commons/constants.dart';
 import 'package:rich_text_composer/views/commons/image_paths.dart';
 import 'package:rich_text_composer/views/widgets/clipper/clipper_stack.dart';
-import 'package:rich_text_composer/views/widgets/rich_text_keyboard_toolbar.dart';
 
 class OptionContainerForTablet extends StatelessWidget {
-  OptionContainerForTablet({
+  const OptionContainerForTablet({
     Key? key,
     required this.title,
     required this.child,
@@ -23,7 +23,6 @@ class OptionContainerForTablet extends StatelessWidget {
   final RichTextController richTextController;
   final EdgeInsets padding;
   final double maxWidth;
-  final ImagePaths _imagePaths = ImagePaths();
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +69,7 @@ class OptionContainerForTablet extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               SvgPicture.asset(
-                                _imagePaths.icBack,
+                                ImagePaths().icBack,
                                 fit: BoxFit.fill,
                                 width: 24,
                                 height: 24,
@@ -109,7 +108,7 @@ class OptionContainerForTablet extends StatelessWidget {
                                   .applyRichTextOptionForTablet.value = false;
                             },
                             child: SvgPicture.asset(
-                              _imagePaths.icDismiss,
+                              ImagePaths().icDismiss,
                               fit: BoxFit.fill,
                               width: 24,
                               height: 24,
