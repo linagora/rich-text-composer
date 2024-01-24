@@ -8,7 +8,7 @@ class CommonColor {
   static const colorStyleBlockQuote = Color(0xFFEEEEEE);
   static const colorBorderStyleCode = Color(0xFFCCCCCC);
   static const colorBackgroundStyleCode = Color(0xFFF5F5F5);
-  static const colorBackgroundToolBar = Color(0xFFD2D5DC);
+  static const colorBackgroundToolBar = Color(0xFFD2D5DB);
 
   static List<Color> get listColorsPicker {
     return [
