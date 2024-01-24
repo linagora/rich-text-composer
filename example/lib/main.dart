@@ -1,4 +1,6 @@
+
 import 'package:flutter/material.dart';
+import 'package:flutter_portal/flutter_portal.dart';
 import 'package:rich_text_composer/rich_text_composer.dart';
 import 'package:rich_text_composer/views/widgets/rich_text_keyboard_toolbar.dart';
 
@@ -58,27 +60,33 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Flutter Demo Home Page')),
-      body: KeyboardRichText(
-        richTextController: richTextController,
-        keyBroadToolbar: RichTextKeyboardToolBar(
-          titleBack: 'Format',
-          backgroundKeyboardToolBarColor: Colors.grey,
-          titleFormatBottomSheet: 'Format',
-          richTextController: richTextController,
-          titleQuickStyleBottomSheet: 'Quick styles',
-          titleBackgroundBottomSheet: 'Background',
-          titleForegroundBottomSheet: 'Foreground',
-        ),
-        child: SingleChildScrollView(
-          child: HtmlEditor(
-            key: const Key('composer_editor'),
-            minHeight: 550,
-            addDefaultSelectionMenuItems: false,
-            onCreated: (editorApi) {
-              richTextController.onCreateHTMLEditor(editorApi, context: context);
-            },
+    return Portal(
+      child: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+          richTextController.htmlEditorApi?.unfocus();
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text('Flutter Demo Home Page'),
+            backgroundColor: Colors.green,
+          ),
+          body: KeyboardRichText(
+            richTextController: richTextController,
+            keyBroadToolbar: RichTextKeyboardToolBar(
+              richTextController: richTextController,
+              rootContext: context
+            ),
+            child: SingleChildScrollView(
+              child: HtmlEditor(
+                key: const Key('composer_editor'),
+                minHeight: 550,
+                addDefaultSelectionMenuItems: false,
+                onCreated: (editorApi) {
+                  richTextController.onCreateHTMLEditor(editorApi);
+                },
+              ),
+            ),
           ),
         ),
       ),
