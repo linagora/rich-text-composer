@@ -17,7 +17,7 @@ dependencies:
   enough_html_editor:
     git:
       url: https://github.com/linagora/enough_html_editor.git
-      ref: email_supported
+      ref: cnb_supported
 
 dev_dependencies:
   flutter_test:
