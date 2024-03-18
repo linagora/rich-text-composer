@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_keyboard_visibility: ^5.4.0
+  flutter_keyboard_visibility: ^6.0.0
   flutter_svg: ^2.0.2
 
   enough_html_editor:
