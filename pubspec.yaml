@@ -1,6 +1,6 @@
 name: rich_text_composer
 description: Unified rich text composer in Flutter
-version: 0.1.0
+version: 0.1.1
 publish_to: none
 
 environment:
@@ -17,7 +17,7 @@ dependencies:
   enough_html_editor:
     git:
       url: https://github.com/linagora/enough_html_editor.git
-      ref: bugfix/ios-editor-height
+      ref: master
 
 dev_dependencies:
   flutter_test:
