@@ -22,7 +22,7 @@ class ListFormatSpecialStyle extends StatelessWidget {
     return BorderContainer(
       child: ValueListenableBuilder(
         valueListenable: richTextController.listSpecialTextStyleApply,
-        builder: (context, _, __) {
+        builder: (context, specialTextStyles, __) {
           return Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -30,7 +30,7 @@ class ListFormatSpecialStyle extends StatelessWidget {
                 child: FormatStyleButton(
                   key: const Key('format_bold_style_button'),
                   iconAsset: ImagePaths().icBoldStyle,
-                  isSelected: richTextController.isTextStyleTypeSelected(SpecialStyleType.bold),
+                  isSelected: specialTextStyles.contains(SpecialStyleType.bold),
                   onTapAction: () => richTextController.selectTextStyleType(SpecialStyleType.bold),
                   packageName: packageName,
                 ),
@@ -40,7 +40,7 @@ class ListFormatSpecialStyle extends StatelessWidget {
                 child: FormatStyleButton(
                   key: const Key('format_italic_style_button'),
                   iconAsset: ImagePaths().icItalicStyle,
-                  isSelected: richTextController.isTextStyleTypeSelected(SpecialStyleType.italic),
+                  isSelected: specialTextStyles.contains(SpecialStyleType.italic),
                   onTapAction: () => richTextController.selectTextStyleType(SpecialStyleType.italic),
                   packageName: packageName,
                 ),
@@ -50,7 +50,7 @@ class ListFormatSpecialStyle extends StatelessWidget {
                 child: FormatStyleButton(
                   key: const Key('format_strike_through_style_button'),
                   iconAsset: ImagePaths().icStrikeThrough,
-                  isSelected: richTextController.isTextStyleTypeSelected(SpecialStyleType.strikeThrough),
+                  isSelected: specialTextStyles.contains(SpecialStyleType.strikeThrough),
                   onTapAction: () => richTextController.selectTextStyleType(SpecialStyleType.strikeThrough),
                   packageName: packageName,
                 ),
@@ -60,7 +60,7 @@ class ListFormatSpecialStyle extends StatelessWidget {
                 child: FormatStyleButton(
                   key: const Key('format_underline_style_button'),
                   iconAsset: ImagePaths().icUnderLine,
-                  isSelected: richTextController.isTextStyleTypeSelected(SpecialStyleType.underline),
+                  isSelected: specialTextStyles.contains(SpecialStyleType.underline),
                   onTapAction: () => richTextController.selectTextStyleType(SpecialStyleType.underline),
                   packageName: packageName,
                 ),
