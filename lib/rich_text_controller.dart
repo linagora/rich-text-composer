@@ -25,22 +25,32 @@ class RichTextController {
   final dxRichTextButtonPosition = ValueNotifier<int>(35);
   final richTextToolbarNotifier = ValueNotifier<bool>(false);
 
-  bool isBoldStyleAppended = false;
-  bool isItalicStyleAppended = false;
-  bool isUnderlineAppended = false;
-  bool isStrikeThroughAppended = false;
-
-  void selectTextStyleType(SpecialStyleType richTextStyleType) {
-    log('RichTextController::selectTextStyleType:richTextStyleType = $richTextStyleType | listSpecialTextStyleApply_BEFORE = ${listSpecialTextStyleApply.value}');
-    if (listSpecialTextStyleApply.value.contains(richTextStyleType)) {
-      listSpecialTextStyleApply.value =
-          Set.from(listSpecialTextStyleApply.value)..remove(richTextStyleType);
+  Future<void> selectTextStyleType(SpecialStyleType styleType) async {
+    log('RichTextController::selectTextStyleType:StyleType = $styleType');
+    final currentStyles = listSpecialTextStyleApply.value;
+    if (currentStyles.contains(styleType)) {
+      currentStyles.remove(styleType);
     } else {
-      listSpecialTextStyleApply.value =
-          Set.from(listSpecialTextStyleApply.value)..add(richTextStyleType);
+      currentStyles.add(styleType);
     }
-    log('RichTextController::selectTextStyleType:listSpecialTextStyleApply_AFTER = ${listSpecialTextStyleApply.value}');
-    applySpecialRichText();
+
+    listSpecialTextStyleApply.value = {...currentStyles};
+
+    switch (styleType) {
+      case SpecialStyleType.bold:
+        await htmlEditorApi?.formatBold();
+        break;
+      case SpecialStyleType.italic:
+        await htmlEditorApi?.formatItalic();
+        break;
+      case SpecialStyleType.underline:
+        await htmlEditorApi?.formatUnderline();
+        break;
+      case SpecialStyleType.strikeThrough:
+        await htmlEditorApi?.formatStrikeThrough();
+        break;
+    }
+    log('RichTextController::selectTextStyleType:ListSpecialTextStyleApply = ${listSpecialTextStyleApply.value}');
   }
 
   void selectTextColor(Color color) {
@@ -72,10 +82,6 @@ class RichTextController {
     applyOrderListType();
   }
 
-  bool isTextStyleTypeSelected(SpecialStyleType richTextStyleType) {
-    return listSpecialTextStyleApply.value.contains(richTextStyleType);
-  }
-
   Future<void> showFormatOptionBottomSheet({
     required BuildContext context,
     String? formatLabel,
@@ -83,7 +89,6 @@ class RichTextController {
     String? backgroundLabel,
     String? quickStyleLabel,
   }) async {
-    log('RichTextController::showFormatOptionBottomSheet:');
     await DialogUtils().showDialogBottomSheet(
       context,
       OptionBottomSheet(
@@ -97,32 +102,6 @@ class RichTextController {
         )
       )
     ).whenComplete(showDeviceKeyboard);
-  }
-
-  Future<void> applySpecialRichText() async {
-    if (isTextStyleTypeSelected(SpecialStyleType.bold) != isBoldStyleAppended) {
-      log('RichTextController::applySpecialRichText:formatBold called');
-      await htmlEditorApi?.formatBold();
-      isBoldStyleAppended = !isBoldStyleAppended;
-    }
-
-    if (isTextStyleTypeSelected(SpecialStyleType.italic) != isItalicStyleAppended) {
-      log('RichTextController::applySpecialRichText:formatItalic called');
-      await htmlEditorApi?.formatItalic();
-      isItalicStyleAppended = !isItalicStyleAppended;
-    }
-
-    if (isTextStyleTypeSelected(SpecialStyleType.underline) != isUnderlineAppended) {
-      log('RichTextController::applySpecialRichText:formatUnderline called');
-      await htmlEditorApi?.formatUnderline();
-      isUnderlineAppended = !isUnderlineAppended;
-    }
-
-    if (isTextStyleTypeSelected(SpecialStyleType.strikeThrough) != isStrikeThroughAppended) {
-      log('RichTextController::applySpecialRichText:formatStrikeThrough called');
-      await htmlEditorApi?.formatStrikeThrough();
-      isStrikeThroughAppended = !isStrikeThroughAppended;
-    }
   }
 
   void applyHeaderStyle(HeaderStyleType styleType) async {
@@ -215,55 +194,36 @@ class RichTextController {
       ..onColorChanged = _onColorChanged;
   }
 
-  void _onFormatSettingsChanged(enough_html_editor.FormatSettings formatSettings) {
-    log('RichTextController::_onFormatSettingsChanged:isBold = ${formatSettings.isBold} | isItalic = ${formatSettings.isItalic} | isUnderline = ${formatSettings.isUnderline} | isStrikeThrough = ${formatSettings.isStrikeThrough}');
+  void _onFormatSettingsChanged(
+    enough_html_editor.FormatSettings formatSettings,
+  ) {
+    log(
+      'RichTextController::_onFormatSettingsChanged:'
+      ' isBold = ${formatSettings.isBold} |'
+      ' isItalic = ${formatSettings.isItalic} |'
+      ' isUnderline = ${formatSettings.isUnderline} |'
+      ' isStrikeThrough = ${formatSettings.isStrikeThrough}',
+    );
+
+    final updatedStyles = <SpecialStyleType>{};
+
     if (formatSettings.isBold) {
-      isBoldStyleAppended = true;
-      listSpecialTextStyleApply.value = Set.from(listSpecialTextStyleApply.value)
-        ..add(SpecialStyleType.bold);
-    } else {
-      listSpecialTextStyleApply.value =
-      Set.from(listSpecialTextStyleApply.value)
-        ..remove(SpecialStyleType.bold);
-      isBoldStyleAppended = false;
+     updatedStyles.add(SpecialStyleType.bold);
     }
-
     if (formatSettings.isItalic) {
-      isItalicStyleAppended = true;
-      listSpecialTextStyleApply.value =
-      Set.from(listSpecialTextStyleApply.value)
-        ..add(SpecialStyleType.italic);
-    } else {
-      isItalicStyleAppended = false;
-      listSpecialTextStyleApply.value =
-      Set.from(listSpecialTextStyleApply.value)
-        ..remove(SpecialStyleType.italic);
+      updatedStyles.add(SpecialStyleType.italic);
     }
-
     if (formatSettings.isUnderline) {
-      isUnderlineAppended = true;
-      listSpecialTextStyleApply.value =
-      Set.from(listSpecialTextStyleApply.value)
-        ..add(SpecialStyleType.underline);
-    } else {
-      listSpecialTextStyleApply.value =
-      Set.from(listSpecialTextStyleApply.value)
-        ..remove(SpecialStyleType.underline);
-      isUnderlineAppended = false;
+      updatedStyles.add(SpecialStyleType.underline);
+    }
+    if (formatSettings.isStrikeThrough) {
+      updatedStyles.add(SpecialStyleType.strikeThrough);
     }
 
-    if (formatSettings.isStrikeThrough) {
-      isStrikeThroughAppended = true;
-      listSpecialTextStyleApply.value =
-      Set.from(listSpecialTextStyleApply.value)
-        ..add(SpecialStyleType.strikeThrough);
-    } else {
-      listSpecialTextStyleApply.value =
-      Set.from(listSpecialTextStyleApply.value)
-        ..remove(SpecialStyleType.strikeThrough);
-      isStrikeThroughAppended = false;
-    }
+    listSpecialTextStyleApply.value = updatedStyles;
+    log('RichTextController::_onFormatSettingsChanged:ListSpecialTextStyleApply = ${listSpecialTextStyleApply.value}');
   }
+
 
   void _onAlignSettingsChanged(enough_html_editor.ElementAlign elementAlign) {
     log('RichTextController::_onAlignSettingsChanged: elementAlign = $elementAlign');
